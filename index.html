@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Webz</title>
+<meta name="description" content="Webz builds fast, bilingual websites for small businesses. Sitios web bilingües para pequeños negocios.">
+<link rel="canonical" href="https://estudiowebz.com/">
+<meta property="og:title" content="Webz">
+<meta property="og:url" content="https://estudiowebz.com/">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one strict monochrome sheet. Wide-set display type, mono labels like the sketch, the web mark as the only image. Dark by design, like the brand sketch. */
+:root {
+  --ink: #0b0b0c;
+  --ink-2: #141416;
+  --line: #2a2a2e;
+  --mute: #8c8c93;
+  --paper: #f3f3f1;
+  --white: #ffffff;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ink); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+.label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* Nav */
+header.nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand svg { width: 30px; height: 30px; }
+.brand span { font-family: var(--mono); font-weight: 500; letter-spacing: 0.22em; font-size: 15px; }
+.nav nav { display: flex; align-items: center; gap: 24px; }
+.nav nav a.link { text-decoration: none; font-size: 15px; color: var(--mute); transition: color .2s; }
+.nav nav a.link:hover { color: var(--white); }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--body); font-weight: 600; font-size: 15px;
+  text-decoration: none; cursor: pointer;
+  padding: 12px 20px; border-radius: 999px;
+  background: var(--white); color: var(--ink);
+  border: 1px solid var(--white);
+  transition: background .2s, color .2s;
+}
+.btn:hover { background: transparent; color: var(--white); }
+.btn.ghost { background: transparent; color: var(--white); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--white); }
+.btn .arrow { transition: transform .2s; }
+.btn:hover .arrow { transform: translateX(3px); }
+
+/* Hero */
+.hero .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  padding-block: 88px 96px;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: clamp(42px, 6.4vw, 84px);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  margin: 18px 0 0;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: normal; font-weight: 300; font-stretch: 100%; }
+.hero p.lede { font-size: 20px; color: var(--mute); max-width: 34ch; margin: 28px 0 0; }
+.hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.mark { position: relative; aspect-ratio: 1; max-width: 100%; }
+.mark svg { width: 100%; height: 100%; display: block; }
+.mark .ring { fill: none; stroke: var(--white); stroke-width: 1.7; stroke-linejoin: round; }
+.mark .spokes { fill: var(--white); }
+.mark .guide { fill: none; stroke: var(--line); stroke-width: .25; }
+@media (prefers-reduced-motion: no-preference) {
+  .mark .ring { stroke-dasharray: 260; stroke-dashoffset: 0; animation: spin-in 1.6s cubic-bezier(.6,.05,.2,1) both .5s; }
+  .mark .spokes path { transform-origin: 50px 50px; animation: grow .9s cubic-bezier(.3,.7,.2,1) both; }
+  .mark .spokes path:nth-child(1) { animation-delay: .00s } .mark .spokes path:nth-child(2) { animation-delay: .06s }
+  .mark .spokes path:nth-child(3) { animation-delay: .12s } .mark .spokes path:nth-child(4) { animation-delay: .18s }
+  .mark .spokes path:nth-child(5) { animation-delay: .24s } .mark .spokes path:nth-child(6) { animation-delay: .30s }
+  .mark .spokes path:nth-child(7) { animation-delay: .36s } .mark .spokes path:nth-child(8) { animation-delay: .42s }
+  .mark .whole { transform-origin: 50px 50px; animation: drift 60s linear infinite 2.2s; }
+}
+@keyframes grow { from { transform: scale(.15); } to { transform: scale(1); } }
+@keyframes spin-in { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
+@keyframes drift { to { transform: rotate(360deg); } }
+
+/* Clock band */
+.clock { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink-2); }
+.clock .wrap { padding-block: 88px; }
+.clock h2, .section h2 {
+  font-family: var(--display); font-stretch: 112%; font-weight: 800;
+  font-size: clamp(32px, 4.6vw, 60px); line-height: 1.02; letter-spacing: -0.025em;
+  margin: 16px 0 0; max-width: 18ch; text-wrap: balance;
+}
+.timer {
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(56px, 13vw, 168px); line-height: 1; letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  margin: 48px 0 0; color: var(--white);
+}
+.timer small { font-size: 14px; letter-spacing: .14em; color: var(--mute); display: block; margin-top: 14px; text-transform: uppercase; }
+.track { position: relative; margin-top: 56px; }
+.track .bar { height: 1px; background: var(--line); position: relative; }
+.track .bar i { position: absolute; inset: 0 auto 0 0; width: 100%; background: var(--white); transform-origin: left; }
+.stops { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 0; }
+.stop { padding-top: 22px; position: relative; min-width: 0; }
+.stop::before { content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--white); }
+.stop .h { font-family: var(--mono); font-size: 13px; letter-spacing: .1em; color: var(--mute); }
+.stop h3 { font-size: 20px; font-weight: 700; margin: 6px 0 6px; }
+.stop p { margin: 0; color: var(--mute); font-size: 15px; }
+
+/* Sections */
+.section .wrap { padding-block: 104px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: start; }
+.section .intro { color: var(--mute); font-size: 19px; max-width: 46ch; margin: 24px 0 0; }
+
+.vision { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: 4px; }
+.vision > div { padding: 32px; min-width: 0; }
+.vision > div + div { border-left: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+.vision > div + div .label { color: #5d5d63; }
+.vision ul { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 14px; }
+.vision li { font-size: 17px; line-height: 1.4; display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; }
+.vision li::before { content: "—"; color: var(--mute); }
+.vision > div + div li::before { content: "✓"; color: var(--ink); font-weight: 700; }
+
+/* Stack */
+.stack { margin-top: 56px; border-top: 1px solid var(--line); }
+.layer {
+  display: grid; grid-template-columns: 120px minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 24px; padding-block: 28px; border-bottom: 1px solid var(--line);
+  align-items: baseline; transition: background .25s, padding .25s;
+}
+.layer:hover { background: var(--ink-2); }
+.layer .lvl { font-family: var(--mono); font-size: 13px; color: var(--mute); letter-spacing: .08em; }
+.layer h3 { font-family: var(--display); font-stretch: 112%; font-weight: 700; font-size: clamp(22px, 2.6vw, 32px); margin: 0; letter-spacing: -0.015em; }
+.layer p { margin: 0; color: var(--mute); }
+.stack-caption { display: flex; justify-content: space-between; margin-top: 14px; }
+
+
+/* Sample work */
+.work { margin-top: 56px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 24px; }
+.site { display: grid; text-decoration: none; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; transition: border-color .2s; }
+.site:hover { border-color: var(--white); }
+.site .chrome { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--ink-2); }
+.site .chrome i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.site .chrome span { margin-left: 10px; font-family: var(--mono); font-size: 12px; color: var(--mute); }
+.site .face { aspect-ratio: 16 / 9; max-width: 100%; display: grid; place-items: center; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -0.02em; background: var(--ink); }
+.site .meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; border-top: 1px solid var(--line); }
+.site .meta span:last-child { transition: transform .2s; }
+.site:hover .meta span:last-child { transform: translate(3px, -3px); }
+
+/* Language gate + switch */
+.gate {
+  position: fixed; inset: 0; z-index: 50;
+  background: var(--ink);
+  display: grid; place-items: center;
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.gate .inner { display: grid; justify-items: center; gap: 28px; text-align: center; width: min(520px, 100%); }
+.gate svg { width: 88px; height: 88px; color: var(--white); }
+.gate .word { font-family: var(--mono); font-weight: 500; letter-spacing: .3em; font-size: 18px; margin-top: -8px; }
+.gate .choices { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; width: 100%; margin-top: 12px; }
+.gate button {
+  font-family: var(--display); font-stretch: 112%; font-weight: 700; font-size: clamp(22px, 4vw, 30px); letter-spacing: -0.01em;
+  padding: 26px 16px; border-radius: 4px; cursor: pointer;
+  background: transparent; color: var(--white); border: 1px solid var(--line);
+  display: grid; gap: 6px; transition: background .2s, color .2s, border-color .2s;
+}
+.gate button small { font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .14em; color: var(--mute); font-stretch: 100%; }
+.gate button:hover { background: var(--white); color: var(--ink); border-color: var(--white); }
+.gate button:hover small { color: #5d5d63; }
+@media (prefers-reduced-motion: no-preference) {
+  .gate .inner { animation: rise .7s cubic-bezier(.3,.7,.2,1) both; }
+  .gate.leaving { animation: fade .45s ease both; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fade { to { opacity: 0; visibility: hidden; } }
+body.gated { overflow: hidden; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.lang button { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; padding: 6px 10px; border-radius: 999px; border: 0; background: transparent; color: var(--mute); cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--white); color: var(--ink); }
+
+/* Contact */
+.contact { background: var(--paper); color: var(--ink); }
+.contact .label { color: #5d5d63; }
+.contact .intro { color: #4a4a50; }
+.contact h2 { color: var(--ink); }
+form { display: grid; gap: 18px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.field { display: grid; gap: 8px; min-width: 0; }
+.field label { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #4a4a50; }
+.field input, .field select, .field textarea {
+  font: inherit; font-size: 16px; color: var(--ink);
+  background: var(--white); border: 1px solid #cfcfcc; border-radius: 4px;
+  padding: 13px 14px; width: 100%; color-scheme: light;
+}
+.field textarea { min-height: 128px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--ink); outline-offset: 0; border-color: var(--ink); }
+.contact .btn { background: var(--ink); color: var(--paper); border-color: var(--ink); justify-self: start; }
+.contact .btn:disabled { opacity: .5; cursor: progress; }
+.contact .btn:hover { background: transparent; color: var(--ink); }
+.contact :focus-visible { outline-color: var(--ink); }
+.note { font-family: var(--mono); font-size: 13px; color: #4a4a50; min-height: 1.4em; margin: 0; }
+
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-block: 36px; border-top: 1px solid var(--line); }
+footer p { margin: 0; color: var(--mute); font-size: 14px; }
+
+@media (max-width: 860px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 56px 72px; }
+  .hero .mark { order: -1; width: min(240px, 60vw); }
+  .split { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .stops { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
+  .track .bar { display: none; }
+  .stop { border-top: 1px solid var(--line); }
+  .layer { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .nav nav a.link { display: none; }
+  .nav nav { gap: 10px; }
+  .nav .btn { padding: 10px 14px; font-size: 14px; }
+}
+@media (max-width: 560px) {
+  .vision { grid-template-columns: minmax(0, 1fr); }
+  .vision > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .stops { grid-template-columns: minmax(0, 1fr); }
+  .section .wrap, .clock .wrap { padding-block: 72px; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="web" viewBox="0 0 100 100">
+      <path d="M50.00 23.00 Q57.65 31.54 69.09 30.91 Q68.46 42.35 77.00 50.00 Q68.46 57.65 69.09 69.09 Q57.65 68.46 50.00 77.00 Q42.35 68.46 30.91 69.09 Q31.54 57.65 23.00 50.00 Q31.54 42.35 30.91 30.91 Q42.35 31.54 50.00 23.00 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+      <path fill="currentColor" d="M52.4 50 L50 4 L47.6 50 Z M51.7 51.7 L73.33 26.67 L48.3 48.3 Z M50 52.4 L96 50 L50 47.6 Z M48.3 51.7 L73.33 73.33 L51.7 48.3 Z M47.6 50 L50 96 L52.4 50 Z M48.3 48.3 L26.67 73.33 L51.7 51.7 Z M50 47.6 L4 50 L50 52.4 Z M51.7 48.3 L26.67 26.67 L48.3 51.7 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" hidden>
+  <div class="inner">
+    <svg aria-hidden="true"><use href="#web"/></svg>
+    <div class="word">WEBZ</div>
+    <p class="label" id="gate-title">Choose your language · Elige tu idioma</p>
+    <div class="choices">
+      <button type="button" data-pick="en">English<small>EN</small></button>
+      <button type="button" data-pick="es">Español<small>ES</small></button>
+    </div>
+  </div>
+</div>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Webz home">
+      <svg aria-hidden="true"><use href="#web"/></svg>
+      <span>WEBZ</span>
+    </a>
+    <nav aria-label="Main">
+      <a class="link" href="#process">72 hours</a>
+      <a class="link" href="#how">How it works</a>
+      <a class="link" href="#services">Services</a>
+      <a class="link" href="#work">Sample work</a>
+      <div class="lang" role="group" aria-label="Language / Idioma">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="es" aria-pressed="false">ES</button>
+      </div>
+      <a class="btn" href="#start">Start your site</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="label">Websites for businesses</div>
+        <h1>A great business deserves a great website.</h1>
+        <p class="lede">We help you build yours, from the first sketch to launch day.</p>
+        <div class="ctas">
+          <a class="btn" href="#start">Tell us your vision <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn ghost" href="#process">See the 72-hour plan</a>
+        </div>
+      </div>
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <g class="whole">
+            <circle class="guide" cx="50" cy="50" r="46"/>
+            <circle class="guide" cx="50" cy="50" r="36"/>
+            <g class="spokes">
+              <path d="M51.60 50.00 L50.00 4.00 L48.40 50.00 Z"/>
+              <path d="M51.13 51.13 L73.33 26.67 L48.87 48.87 Z"/>
+              <path d="M50.00 51.60 L96.00 50.00 L50.00 48.40 Z"/>
+              <path d="M48.87 51.13 L73.33 73.33 L51.13 48.87 Z"/>
+              <path d="M48.40 50.00 L50.00 96.00 L51.60 50.00 Z"/>
+              <path d="M48.87 48.87 L26.67 73.33 L51.13 51.13 Z"/>
+              <path d="M50.00 48.40 L4.00 50.00 L50.00 51.60 Z"/>
+              <path d="M51.13 48.87 L26.67 26.67 L48.87 51.13 Z"/>
+            </g>
+            <path class="ring" d="M50.00 23.00 Q57.65 31.54 69.09 30.91 Q68.46 42.35 77.00 50.00 Q68.46 57.65 69.09 69.09 Q57.65 68.46 50.00 77.00 Q42.35 68.46 30.91 69.09 Q31.54 57.65 23.00 50.00 Q31.54 42.35 30.91 30.91 Q42.35 31.54 50.00 23.00 Z"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="clock" id="process">
+    <div class="wrap">
+      <div class="label">The 72-hour build</div>
+      <h2>Have the site of your dreams within 72 hours.</h2>
+      <div class="timer" id="timer" aria-label="72 hours">72:00:00<small>From kickoff call to live site</small></div>
+      <div class="track">
+        <div class="bar"><i id="bar"></i></div>
+        <div class="stops">
+          <div class="stop"><div class="h">HOUR 00</div><h3>Kickoff</h3><p>A short call. You tell us about your business, your customers and the look you want.</p></div>
+          <div class="stop"><div class="h">HOUR 24</div><h3>Design</h3><p>You get a full design of your homepage and key pages to review and adjust.</p></div>
+          <div class="stop"><div class="h">HOUR 48</div><h3>Build</h3><p>We build it for real: fast on every screen, with your content, forms and contact details.</p></div>
+          <div class="stop"><div class="h">HOUR 72</div><h3>Live</h3><p>Your site goes live on your domain, and we hand you the keys.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="wrap split">
+      <div>
+        <div class="label">How it works</div>
+        <h2>You tell us your vision, we bring it to reality.</h2>
+        <p class="intro">You know your business better than anyone. We know how to turn that into a site that people trust and that brings you customers.</p>
+      </div>
+      <div class="vision">
+        <div>
+          <div class="label">You bring</div>
+          <ul>
+            <li>What your business does and who it serves</li>
+            <li>Sites you like, colors, a logo if you have one</li>
+            <li>Photos, prices, opening hours</li>
+            <li>About 30 minutes for a call</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">We deliver</div>
+          <ul>
+            <li>A custom design, not a template</li>
+            <li>Copy that explains what you do</li>
+            <li>A fast site that looks great on computers, tablets and phones</li>
+            <li>Your domain, hosting and email set up</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="label">Services</div>
+      <h2>From the design to the server, we handle everything.</h2>
+      <div class="stack">
+        <div class="layer"><span class="lvl">DESIGN</span><h3>Brand &amp; design</h3><p>Layout, typography and visuals that fit your business, reviewed with you before we build.</p></div>
+        <div class="layer"><span class="lvl">BUILD</span><h3>Development</h3><p>Fast, accessible pages with contact forms, booking links, menus or online stores.</p></div>
+        <div class="layer"><span class="lvl">LAUNCH</span><h3>Domain &amp; hosting</h3><p>We register or connect your domain, set up hosting and secure it with HTTPS.</p></div>
+        <div class="layer"><span class="lvl">RUN</span><h3>Care &amp; updates</h3><p>Content changes, backups, security updates and uptime monitoring every month.</p></div>
+      </div>
+      <div class="stack-caption"><span class="label">↑ What your visitors see</span><span class="label">What runs underneath ↓</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="work" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="label">Sample work</div>
+      <h2>Sites we've built.</h2>
+      <div class="work">
+        <a class="site" href="https://estudiomir.com" target="_blank" rel="noopener">
+          <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>https://estudiomir.com</span></div>
+          <div class="face">estudiomir.com</div>
+          <div class="meta"><span class="label">Visit the live site</span><span aria-hidden="true">↗</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact" id="start">
+    <div class="wrap split">
+      <div>
+        <div class="label">Start your site</div>
+        <h2>Tell us about your business.</h2>
+        <p class="intro">Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.</p>
+      </div>
+      <form id="lead" novalidate>
+        <div class="row">
+          <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" placeholder="Ana Gómez" required></div>
+          <div class="field"><label for="f-biz">Business</label><input id="f-biz" name="business" autocomplete="organization" placeholder="Café Luna"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="ana@cafeluna.com" required></div>
+          <div class="field"><label for="f-need">I need</label>
+            <select id="f-need" name="need">
+              <option>A new website</option>
+              <option>A redesign of my current site</option>
+              <option>Someone to run my existing site</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-msg">Your vision</label><textarea id="f-msg" name="message" placeholder="A warm, simple site with our menu, opening hours and a way to reserve a table."></textarea></div>
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <button class="btn" type="submit">Send my vision <span class="arrow" aria-hidden="true">→</span></button>
+        <p class="note" id="note" role="status"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Webz home"><svg aria-hidden="true"><use href="#web"/></svg><span>WEBZ</span></a>
+    <p>Websites built in 72 hours, from the design to the server.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Spanish copy, keyed by the English text on the page.
+  var ES = {
+    "72 hours": "72 horas",
+    "How it works": "Cómo funciona",
+    "Services": "Servicios",
+    "Sample work": "Nuestro trabajo",
+    "Start your site": "Empieza tu sitio",
+    "Websites for businesses": "Sitios web para negocios",
+    "A great business deserves a great website.": "Un gran negocio merece un gran sitio web.",
+    "We help you build yours, from the first sketch to launch day.": "Te ayudamos a construir el tuyo, desde el primer boceto hasta el día del lanzamiento.",
+    "Tell us your vision": "Cuéntanos tu visión",
+    "See the 72-hour plan": "Ver el plan de 72 horas",
+    "The 72-hour build": "Tu sitio en 72 horas",
+    "Have the site of your dreams within 72 hours.": "Ten el sitio de tus sueños en 72 horas.",
+    "From kickoff call to live site": "De la primera llamada al sitio en línea",
+    "Your site is live": "Tu sitio está en línea",
+    "HOUR 00": "HORA 00", "HOUR 24": "HORA 24", "HOUR 48": "HORA 48", "HOUR 72": "HORA 72",
+    "Kickoff": "Inicio",
+    "A short call. You tell us about your business, your customers and the look you want.": "Una llamada corta. Nos cuentas sobre tu negocio, tus clientes y el estilo que quieres.",
+    "Design": "Diseño",
+    "You get a full design of your homepage and key pages to review and adjust.": "Recibes el diseño completo de tu página principal y tus páginas clave para revisarlo y ajustarlo.",
+    "Build": "Construcción",
+    "We build it for real: fast on every screen, with your content, forms and contact details.": "Lo construimos de verdad: rápido en cualquier pantalla, con tu contenido, formularios y datos de contacto.",
+    "Live": "En línea",
+    "Your site goes live on your domain, and we hand you the keys.": "Tu sitio se publica en tu dominio y te entregamos las llaves.",
+    "You tell us your vision, we bring it to reality.": "Tú nos cuentas tu visión, nosotros la hacemos realidad.",
+    "You know your business better than anyone. We know how to turn that into a site that people trust and that brings you customers.": "Nadie conoce tu negocio mejor que tú. Nosotros sabemos convertir eso en un sitio que genera confianza y te trae clientes.",
+    "You bring": "Tú traes",
+    "What your business does and who it serves": "Qué hace tu negocio y a quién atiende",
+    "Sites you like, colors, a logo if you have one": "Sitios que te gustan, colores y tu logo si ya tienes uno",
+    "Photos, prices, opening hours": "Fotos, precios y horarios",
+    "About 30 minutes for a call": "Unos 30 minutos para una llamada",
+    "We deliver": "Nosotros entregamos",
+    "A custom design, not a template": "Un diseño a la medida, no una plantilla",
+    "Copy that explains what you do": "Textos que explican lo que haces",
+    "A fast site that looks great on computers, tablets and phones": "Un sitio rápido que se ve muy bien en computadores, tablets y celulares",
+    "Your domain, hosting and email set up": "Tu dominio, hosting y correo configurados",
+    "From the design to the server, we handle everything.": "Del diseño al servidor, nos encargamos de todo.",
+    "DESIGN": "DISEÑO", "BUILD": "DESARROLLO", "LAUNCH": "LANZAMIENTO", "RUN": "OPERACIÓN",
+    "Brand & design": "Marca y diseño",
+    "Layout, typography and visuals that fit your business, reviewed with you before we build.": "Diseño, tipografía y elementos visuales hechos para tu negocio, revisados contigo antes de construir.",
+    "Development": "Desarrollo",
+    "Fast, accessible pages with contact forms, booking links, menus or online stores.": "Páginas rápidas y accesibles con formularios de contacto, reservas, menús o tiendas en línea.",
+    "Domain & hosting": "Dominio y hosting",
+    "We register or connect your domain, set up hosting and secure it with HTTPS.": "Registramos o conectamos tu dominio, configuramos el hosting y lo protegemos con HTTPS.",
+    "Care & updates": "Soporte y actualizaciones",
+    "Content changes, backups, security updates and uptime monitoring every month.": "Cambios de contenido, copias de seguridad, actualizaciones de seguridad y monitoreo cada mes.",
+    "↑ What your visitors see": "↑ Lo que ven tus visitantes",
+    "What runs underneath ↓": "Lo que funciona por debajo ↓",
+    "Sites we've built.": "Sitios que hemos creado.",
+    "Visit the live site": "Visitar el sitio",
+    "Tell us about your business.": "Cuéntanos sobre tu negocio.",
+    "Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.": "Escríbenos unas líneas y te responderemos en un día hábil para agendar la llamada de inicio. Ahí empiezan tus 72 horas.",
+    "Your name": "Tu nombre",
+    "Business": "Negocio",
+    "Email": "Correo",
+    "I need": "Necesito",
+    "A new website": "Un sitio web nuevo",
+    "A redesign of my current site": "Rediseñar mi sitio actual",
+    "Someone to run my existing site": "Alguien que administre mi sitio actual",
+    "Not sure yet": "Aún no estoy seguro",
+    "Your vision": "Tu visión",
+    "A warm, simple site with our menu, opening hours and a way to reserve a table.": "Un sitio cálido y sencillo con nuestro menú, horarios y una forma de reservar mesa.",
+    "Send my vision": "Enviar mi visión",
+    "Websites built in 72 hours, from the design to the server.": "Sitios web listos en 72 horas, del diseño al servidor.",
+    "Add your name so we know who to reply to.": "Escribe tu nombre para saber a quién responder.",
+    "Add an email address like name@business.com.": "Escribe un correo como nombre@negocio.com.",
+    "Thanks": "Gracias",
+    "Sending…": "Enviando…",
+    "We got your message and will reply within one business day.": "Recibimos tu mensaje y te responderemos en un día hábil.",
+    "We couldn't send your message. Please email us at": "No pudimos enviar tu mensaje. Escríbenos a"
+  };
+  var lang = 'en';
+  window.webzT = function (en) { return lang === 'es' && ES[en] ? ES[en] : en; };
+
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (var n; (n = walker.nextNode());) {
+    var key = n.nodeValue.trim();
+    if (ES[key] && !n.parentNode.closest('script, style, #timer')) nodes.push({ node: n, en: n.nodeValue, key: key });
+  }
+  var holders = Array.prototype.map.call(document.querySelectorAll('[placeholder]'), function (el) { return { el: el, en: el.getAttribute('placeholder') }; });
+
+  function apply(next) {
+    lang = next === 'es' ? 'es' : 'en';
+    document.documentElement.lang = lang;
+    nodes.forEach(function (x) { x.node.nodeValue = lang === 'es' ? x.en.replace(x.key, ES[x.key]) : x.en; });
+    holders.forEach(function (x) { x.el.setAttribute('placeholder', webzT(x.en)); });
+    var timer = document.getElementById('timer');
+    var cap = timer.querySelector('small');
+    if (cap) cap.textContent = webzT(timer.dataset.done ? 'Your site is live' : 'From kickoff call to live site');
+    document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    try { localStorage.setItem('webz-lang', lang); } catch (e) {}
+  }
+
+  var gate = document.getElementById('gate');
+  var saved = null;
+  try { saved = localStorage.getItem('webz-lang'); } catch (e) {}
+  if (saved === 'en' || saved === 'es') {
+    apply(saved);
+  } else {
+    gate.hidden = false;
+    document.body.classList.add('gated');
+  }
+  gate.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-pick]');
+    if (!b) return;
+    apply(b.dataset.pick);
+    document.body.classList.remove('gated');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { gate.hidden = true; return; }
+    gate.classList.add('leaving');
+    setTimeout(function () { gate.hidden = true; }, 460);
+  });
+  document.querySelectorAll('[data-lang]').forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.dataset.lang); });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var tr = window.webzT;
+  // Count the 72-hour clock down once when the band comes into view.
+  var timer = document.getElementById('timer');
+  var bar = document.getElementById('bar');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fmt(h) {
+    var total = Math.round(h * 3600), hh = Math.floor(total / 3600), mm = Math.floor(total % 3600 / 60), ss = total % 60;
+    return [hh, mm, ss].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
+  }
+  function run() {
+    var start = null, dur = 2600;
+    function step(t) {
+      if (!start) start = t;
+      var k = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - k, 3);
+      timer.innerHTML = fmt(72 * (1 - e)) + '<small>' + tr('From kickoff call to live site') + '</small>'; timer.dataset.done = '';
+      bar.style.transform = 'scaleX(' + e + ')';
+      if (k < 1) requestAnimationFrame(step);
+      else { timer.dataset.done = '1'; timer.innerHTML = '00:00:00<small>' + tr('Your site is live') + '</small>'; }
+    }
+    requestAnimationFrame(step);
+  }
+  if (!reduce && 'IntersectionObserver' in window) {
+    var done = false;
+    new IntersectionObserver(function (es, o) {
+      if (!done && es[0].isIntersecting) { done = true; o.disconnect(); run(); }
+    }, { threshold: 0.5 }).observe(timer);
+  }
+
+  // Form submissions are emailed to the Webz inbox through FormSubmit (formsubmit.co).
+  var EMAIL = 'webzsites26@gmail.com';
+  var INBOX = 'https://formsubmit.co/ajax/' + EMAIL;
+  var form = document.getElementById('lead'), note = document.getElementById('note');
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var fn = document.getElementById('f-name'), fe = document.getElementById('f-email');
+    var name = fn.value.trim(), email = fe.value.trim();
+    if (!name) { note.textContent = tr('Add your name so we know who to reply to.'); fn.focus(); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = tr('Add an email address like name@business.com.'); fe.focus(); return; }
+    if (form.querySelector('[name=_honey]').value) return;
+    var btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    note.textContent = tr('Sending…');
+    fetch(INBOX, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'New Webz request from ' + name,
+        _template: 'table',
+        name: name,
+        business: document.getElementById('f-biz').value.trim(),
+        email: email,
+        need: document.getElementById('f-need').value,
+        message: document.getElementById('f-msg').value.trim(),
+        language: document.documentElement.lang === 'es' ? 'Español' : 'English'
+      })
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      note.textContent = tr('Thanks') + ', ' + name.split(' ')[0] + '. ' + tr("We got your message and will reply within one business day.");
+    }).catch(function () {
+      note.textContent = tr("We couldn't send your message. Please email us at") + ' ' + EMAIL;
+    }).then(function () { btn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

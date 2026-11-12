@@ -1,2 +1,3 @@
-# webz
-Webz website, live at estudiowebz.com
+# Webz
+
+Bilingual (EN/ES) site for Webz, live at https://estudiowebz.com via GitHub Pages.
