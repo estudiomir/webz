@@ -191,6 +191,7 @@ header.nav {
 .site .meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; border-top: 1px solid var(--line); }
 .site .meta span:last-child { transition: transform .2s; }
 .site:hover .meta span:last-child { transform: translate(3px, -3px); }
+.site .out { display: inline-flex; }
 
 /* Language gate + switch */
 .gate {
@@ -452,7 +453,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
         <a class="site" href="https://estudiomir.com" target="_blank" rel="noopener">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>https://estudiomir.com</span></div>
           <div class="face">estudiomir.com</div>
-          <div class="meta"><span class="label">Visit the live site</span><span aria-hidden="true">↗</span></div>
+          <div class="meta"><span class="label">Visit the live site</span><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
       </div>
     </div>
