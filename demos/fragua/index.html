@@ -41,6 +41,8 @@ img, video { display: block; max-width: 100%; }
 .gate-in { display: grid; gap: clamp(18px, 3vh, 34px); justify-items: center; }
 .gate h1 { font-size: clamp(88px, 21vw, 330px); overflow: hidden; }
 .gate h1 span { display: inline-block; }
+.gate-in { visibility: hidden; }
+.fonts .gate-in { visibility: visible; }
 .gate p { max-width: 30ch; color: var(--mute); }
 .gate-btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .btn { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 17px 26px; border: 1.5px solid var(--bone); overflow: hidden; isolation: isolate; transition: color .35s var(--ease), border-color .35s; }
@@ -475,10 +477,15 @@ $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const t = $(a
 /* ---------- hero video + gate ---------- */
 const vid = $('.hero video');
 vid.poster = `video/poster-${L}.jpg`; vid.src = `video/hero-${L}.mp4`;
-gsap.from('.gate h1 span', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: .06, delay: .15 });
-gsap.from('.gate-in > :not(h1)', { opacity: 0, y: 18, duration: .8, stagger: .08, delay: .5 });
+const showGate = () => {
+  if (document.documentElement.classList.contains('fonts')) return;
+  document.documentElement.classList.add('fonts');
+  gsap.from('.gate h1 span', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: .06, delay: .1 });
+  gsap.from('.gate-in > :not(h1)', { opacity: 0, y: 18, duration: .8, stagger: .08, delay: .45 });
+};
+if (document.fonts && document.fonts.load) document.fonts.load('400 80px Anton').then(showGate, showGate);
+setTimeout(showGate, 1800);
 let entered = false;
-$('[data-enter="1"]').focus({ preventScroll: true });
 $$('[data-enter]').forEach(b => b.addEventListener('click', () => {
   if (entered) return; entered = true;
   const on = b.dataset.enter === '1';
