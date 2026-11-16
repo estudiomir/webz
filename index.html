@@ -252,6 +252,40 @@ form { display: grid; gap: 18px; }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-block: 36px; border-top: 1px solid var(--line); }
 footer p { margin: 0; color: var(--mute); font-size: 14px; }
 
+/* Accent: one shiny lime, used sparingly. Black and white stay the base. */
+:root {
+  --acc: #c8ff2e; --acc-hi: #e9ff8f; --acc-lo: #7fd400; --acc-rgb: 200, 255, 46;
+  --shine: linear-gradient(135deg, var(--acc-hi) 0%, var(--acc) 45%, var(--acc-lo) 100%);
+}
+.btn:not(.ghost), .contact .btn:not(.ghost) {
+  background: var(--shine); color: var(--ink); border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .35), 0 6px 24px -6px rgba(var(--acc-rgb), .65), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: filter .2s, box-shadow .2s;
+}
+.btn:not(.ghost):hover, .contact .btn:not(.ghost):hover {
+  background: var(--shine); color: var(--ink); filter: brightness(1.08);
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .5), 0 8px 34px -4px rgba(var(--acc-rgb), .85), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+.btn.ghost:hover { border-color: var(--acc); color: var(--acc); }
+.contact .btn.ghost:hover { color: var(--paper); border-color: var(--ink); }
+.hl { background: var(--shine); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 18px rgba(var(--acc-rgb), .35)); }
+.hero .label::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 10px rgba(var(--acc-rgb), .9); margin-right: 10px; vertical-align: 1px; }
+.lang button[aria-pressed="true"] { background: var(--acc); color: var(--ink); }
+.track .bar i { background: var(--shine); box-shadow: 0 0 12px rgba(var(--acc-rgb), .8); }
+.stop:last-child::before { background: var(--acc); box-shadow: 0 0 12px rgba(var(--acc-rgb), .9); }
+.stop:last-child .h { color: var(--acc); }
+.timer .tick { color: var(--acc); text-shadow: 0 0 24px rgba(var(--acc-rgb), .5); }
+.layer { position: relative; }
+.layer::before { content: ""; position: absolute; left: -16px; top: 0; bottom: 0; width: 3px; background: var(--shine); box-shadow: 0 0 12px rgba(var(--acc-rgb), .8); opacity: 0; transition: opacity .25s; }
+.layer:hover::before { opacity: 1; }
+.layer .lvl { transition: color .25s; }
+.layer:hover .lvl { color: var(--acc); }
+.site:hover { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc), 0 0 36px -8px rgba(var(--acc-rgb), .7); }
+.site:hover .meta span:last-child { color: var(--acc); }
+.gate button:hover { box-shadow: 0 0 28px -6px rgba(var(--acc-rgb), .6); }
+/* The language screen sets display:grid, which beat the hidden attribute and kept it on screen. */
+.gate[hidden] { display: none; }
+
 @media (max-width: 860px) {
   .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 56px 72px; }
   .hero .mark { order: -1; width: min(240px, 60vw); }
@@ -320,7 +354,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     <div class="wrap">
       <div>
         <div class="label">Websites for businesses</div>
-        <h1>A great business deserves a great website.</h1>
+        <h1>A great business deserves <span class="hl">a great website.</span></h1>
         <p class="lede">We help you build yours, from the first sketch to launch day.</p>
         <div class="ctas">
           <a class="btn" href="#start">Tell us your vision <span class="arrow" aria-hidden="true">→</span></a>
@@ -353,7 +387,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     <div class="wrap">
       <div class="label">The 72-hour build</div>
       <h2>Have the site of your dreams within 72 hours.</h2>
-      <div class="timer" id="timer" aria-label="72 hours">72:00:00<small>From kickoff call to live site</small></div>
+      <div class="timer" id="timer" aria-label="72 hours"><span class="tick">72</span>:00:00<small>From kickoff call to live site</small></div>
       <div class="track">
         <div class="bar"><i id="bar"></i></div>
         <div class="stops">
@@ -477,7 +511,8 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     "Sample work": "Nuestro trabajo",
     "Start your site": "Empieza tu sitio",
     "Websites for businesses": "Sitios web para negocios",
-    "A great business deserves a great website.": "Un gran negocio merece un gran sitio web.",
+    "A great business deserves": "Un gran negocio merece",
+    "a great website.": "un gran sitio web.",
     "We help you build yours, from the first sketch to launch day.": "Te ayudamos a construir el tuyo, desde el primer boceto hasta el día del lanzamiento.",
     "Tell us your vision": "Cuéntanos tu visión",
     "See the 72-hour plan": "Ver el plan de 72 horas",
@@ -607,10 +642,11 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     function step(t) {
       if (!start) start = t;
       var k = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - k, 3);
-      timer.innerHTML = fmt(72 * (1 - e)) + '<small>' + tr('From kickoff call to live site') + '</small>'; timer.dataset.done = '';
+      var t = fmt(72 * (1 - e));
+      timer.innerHTML = '<span class="tick">' + t.slice(0, 2) + '</span>' + t.slice(2) + '<small>' + tr('From kickoff call to live site') + '</small>'; timer.dataset.done = '';
       bar.style.transform = 'scaleX(' + e + ')';
       if (k < 1) requestAnimationFrame(step);
-      else { timer.dataset.done = '1'; timer.innerHTML = '00:00:00<small>' + tr('Your site is live') + '</small>'; }
+      else { timer.dataset.done = '1'; timer.innerHTML = '<span class="tick">00</span>:00:00<small>' + tr('Your site is live') + '</small>'; }
     }
     requestAnimationFrame(step);
   }
