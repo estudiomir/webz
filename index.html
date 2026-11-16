@@ -243,6 +243,10 @@ form { display: grid; gap: 18px; }
 .contact .btn:disabled { opacity: .5; cursor: progress; }
 .contact .btn:hover { background: transparent; color: var(--ink); }
 .contact :focus-visible { outline-color: var(--ink); }
+.contact .call { margin-top: 32px; padding-top: 24px; border-top: 1px solid #d6d6da; max-width: 46ch; }
+.contact .call p { margin: 0 0 16px; color: #4a4a50; }
+.contact .btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.contact .btn.ghost:hover { background: var(--ink); color: var(--paper); }
 .note { font-family: var(--mono); font-size: 13px; color: #4a4a50; min-height: 1.4em; margin: 0; }
 
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-block: 36px; border-top: 1px solid var(--line); }
@@ -426,6 +430,10 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
         <div class="label">Start your site</div>
         <h2>Tell us about your business.</h2>
         <p class="intro">Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.</p>
+        <div class="call" id="call" hidden>
+          <p>Prefer to talk first? Pick a time for a free 20-minute video call.</p>
+          <a class="btn ghost" id="book" href="#start" target="_blank" rel="noopener">Book a call <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
       </div>
       <form id="lead" novalidate>
         <div class="row">
@@ -514,6 +522,8 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     "Visit the live site": "Visitar el sitio",
     "Tell us about your business.": "Cuéntanos sobre tu negocio.",
     "Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.": "Escríbenos unas líneas y te responderemos en un día hábil para agendar la llamada de inicio. Ahí empiezan tus 72 horas.",
+    "Prefer to talk first? Pick a time for a free 20-minute video call.": "¿Prefieres hablar primero? Elige un horario para una videollamada gratis de 20 minutos.",
+    "Book a call": "Agenda una llamada",
     "Your name": "Tu nombre",
     "Business": "Negocio",
     "Email": "Correo",
@@ -612,8 +622,15 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
   }
 
   // Form submissions are emailed to the Webz inbox through FormSubmit (formsubmit.co).
-  var EMAIL = 'webzsites26@gmail.com';
+  var EMAIL = 'sites@estudiowebz.com';
   var INBOX = 'https://formsubmit.co/ajax/' + EMAIL;
+  // Client call booking page (Google Calendar appointment schedule). The "Book a call"
+  // block in the contact section stays hidden until this has a link.
+  var BOOKING_URL = '';
+  if (BOOKING_URL) {
+    document.getElementById('book').href = BOOKING_URL;
+    document.getElementById('call').hidden = false;
+  }
   var form = document.getElementById('lead'), note = document.getElementById('note');
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
