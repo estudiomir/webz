@@ -199,6 +199,7 @@ header.nav {
 .site .meta .out { flex: none; }
 .site .who { min-width: 0; }
 .site .tag { font-weight: 500; font-stretch: 100%; }
+.site .tag.end { left: auto; right: 12px; }
 .site .who b { display: block; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; margin-bottom: 4px; }
 @media (prefers-reduced-motion: reduce) { .site .shot img { transition: none; } }
 .site .out { display: inline-flex; }
@@ -478,8 +479,8 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
         </a>
         <a class="site" href="https://estudiomir.com" target="_blank" rel="noopener">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>https://estudiomir.com</span></div>
-          <div class="face shot">estudiomir.com<span class="tag">Live site</span></div>
-          <div class="meta"><div class="who"><b>Estudio Mir</b><div class="label">Visit the live site</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
+          <div class="face shot"><img src="demos/thumbs/estudiomir.webp" width="1280" height="720" loading="lazy" alt="MIR estudio, an interior design studio in Bogotá" data-alt-es="MIR estudio, un estudio de diseño interior en Bogotá"><span class="tag end">Live site</span></div>
+          <div class="meta"><div class="who"><b>MIR estudio</b><div class="label">Interior design studio · Bogotá</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
       </div>
     </div>
@@ -585,6 +586,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     "Three concept sites for made-up businesses, built to show the motion and detail we can bring to yours. Plus one that is live.": "Tres sitios concepto para negocios inventados, hechos para mostrar el movimiento y el detalle que podemos darle al tuyo. Y uno que ya está en línea.",
     "Concept demo": "Demo concepto",
     "Live site": "Sitio en línea",
+    "Interior design studio · Bogotá": "Estudio de diseño interior · Bogotá",
     "Coffee shop · Scroll storytelling": "Cafetería · Historia que avanza con el scroll",
     "Clothing brand · Interactive 3D": "Marca de ropa · 3D interactivo",
     "Gym · Motion graphics and sound": "Gimnasio · Animación y sonido",
@@ -633,9 +635,10 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
     document.querySelectorAll('[data-demo]').forEach(function (a) {
       a.href = 'demos/' + a.dataset.demo + '/?lang=' + lang;
-      var img = a.querySelector('img');
+      a.querySelector('img').src = 'demos/thumbs/' + a.dataset.demo + '-' + lang + '.webp';
+    });
+    document.querySelectorAll('.site img[data-alt-es]').forEach(function (img) {
       if (!img.dataset.altEn) img.dataset.altEn = img.alt;
-      img.src = 'demos/thumbs/' + a.dataset.demo + '-' + lang + '.webp';
       img.alt = lang === 'es' ? img.dataset.altEs : img.dataset.altEn;
     });
     try { localStorage.setItem('webz-lang', lang); } catch (e) {}
