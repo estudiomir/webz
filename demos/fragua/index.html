@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-es-title="Fragua · Club de fuerza (demo de Webz)">Fragua · Strength club (Webz demo)</title>
+<meta name="description" content="Fragua is a fictional strength club. A demo site designed and built by Webz.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/demo.css">
+<script src="../shared/demo.js"></script>
+<style>
+:root { --ink: #0a0a0a; --coal: #151413; --ember: #ff4a1c; --bone: #f2efe9; --mute: #8b867d; --ease: cubic-bezier(.16, 1, .3, 1); --pad: clamp(18px, 3.2vw, 48px); }
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--ink); overflow-x: clip; }
+main { overflow-x: clip; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+body { background: var(--ink); color: var(--bone); font: 400 17px/1.5 Barlow, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body.locked { overflow: hidden; height: 100svh; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img, video { display: block; max-width: 100%; }
+.d { font-family: Anton, Impact, sans-serif; text-transform: uppercase; line-height: .88; font-weight: 400; letter-spacing: -.005em; }
+.m { font: 600 13px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+.em { color: var(--ember); }
+::selection { background: var(--ember); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+.pr.open :focus-visible, .plan.hot :focus-visible, .sched :focus-visible { outline-color: var(--ink); }
+
+/* fixed layers */
+#sparks { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+.bar { position: fixed; top: 0; left: 0; height: 3px; width: 100%; background: var(--ember); transform-origin: 0 50%; transform: scaleX(0); z-index: 70; }
+
+/* gate */
+.gate { position: fixed; inset: 0; z-index: 100; background: var(--ink); display: grid; place-items: center; text-align: center; padding: var(--pad); }
+.gate-in { display: grid; gap: clamp(18px, 3vh, 34px); justify-items: center; }
+.gate h1 { font-size: clamp(88px, 21vw, 330px); overflow: hidden; }
+.gate h1 span { display: inline-block; }
+.gate p { max-width: 30ch; color: var(--mute); }
+.gate-btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.btn { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 17px 26px; border: 1.5px solid var(--bone); overflow: hidden; isolation: isolate; transition: color .35s var(--ease), border-color .35s; }
+.btn::before { content: ""; position: absolute; inset: 0; background: var(--ember); transform: translateY(102%); transition: transform .5s var(--ease); z-index: -1; }
+.btn:hover, .btn:focus-visible { color: var(--ink); border-color: var(--ember); }
+.btn:hover::before, .btn:focus-visible::before { transform: none; }
+.btn.fill { background: var(--ember); border-color: var(--ember); color: var(--ink); }
+.btn.fill::before { background: var(--bone); }
+.btn.fill:hover { border-color: var(--bone); }
+.eq { display: inline-flex; gap: 3px; align-items: flex-end; height: 14px; }
+.eq i { width: 3px; height: 100%; background: currentColor; transform-origin: 50% 100%; transform: scaleY(.25); }
+.on .eq i, .eq.play i { animation: eq 1s ease-in-out infinite; }
+.eq i:nth-child(2) { animation-delay: -.35s !important; } .eq i:nth-child(3) { animation-delay: -.7s !important; } .eq i:nth-child(4) { animation-delay: -.15s !important; }
+@keyframes eq { 0%, 100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+.wipe { position: fixed; inset: 0; z-index: 110; pointer-events: none; overflow: hidden; }
+.wipe i { position: absolute; left: -230%; width: 220%; height: 17.2%; background: var(--ember); transform: skewX(-24deg); }
+.wipe i:nth-child(3n+2) { background: var(--bone); }
+
+/* nav */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 18px var(--pad); mix-blend-mode: difference; }
+.logo { font: 400 26px/1 Anton, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+.nav-links { display: flex; gap: 30px; }
+.nav-links a { position: relative; padding: 4px 0; }
+.nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: 100% 50%; transition: transform .4s var(--ease); }
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: 0 50%; }
+.nav-r { display: flex; align-items: center; gap: 16px; }
+.lang { display: flex; gap: 2px; }
+.lang button { padding: 6px 7px; opacity: .5; }
+.lang button[aria-pressed="true"] { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+.snd { display: inline-flex; align-items: center; gap: 9px; padding: 8px 10px; border: 1.5px solid currentColor; }
+
+/* hero */
+.hero { position: relative; height: 100svh; min-height: 520px; overflow: hidden; background: #000; }
+.hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-b { position: absolute; left: var(--pad); right: var(--pad); bottom: clamp(52px, 8vh, 84px); display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; z-index: 2; }
+.hero-b p { max-width: 34ch; text-shadow: 0 1px 20px rgba(0,0,0,.8); }
+.hero h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.hero-t { display: none; }
+.scrolly { display: inline-flex; align-items: center; gap: 12px; }
+.scrolly i { width: 1.5px; height: 44px; background: var(--bone); transform-origin: 50% 0; animation: drip 1.8s var(--ease) infinite; }
+@keyframes drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); transform-origin: 50% 0; } 61% { transform-origin: 50% 100%; } 100% { transform: scaleY(0); transform-origin: 50% 100%; } }
+
+/* marquee */
+.mq { background: var(--ember); color: var(--ink); overflow: hidden; padding: clamp(10px, 1.6vw, 20px) 0; white-space: nowrap; transform: rotate(-1.4deg) scale(1.03); margin: -14px 0; position: relative; z-index: 3; }
+.mq.alt { background: var(--bone); transform: rotate(1.1deg) scale(1.03); }
+.mq-t { display: inline-flex; will-change: transform; }
+.mq-t span { font-size: clamp(34px, 6vw, 92px); padding-right: .35em; }
+.mq-t span b { font-weight: 400; -webkit-text-stroke: 1.5px var(--ink); color: transparent; }
+
+/* intro */
+.intro { padding: clamp(110px, 17vw, 240px) var(--pad) clamp(80px, 11vw, 170px); display: grid; grid-template-columns: 1fr 3fr; gap: 30px; }
+.intro h2 { font-size: clamp(40px, 7.6vw, 128px); }
+.intro h2 .ch { display: inline-block; }
+.intro-p { grid-column: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 34ch)); gap: 26px 60px; margin-top: clamp(30px, 5vw, 70px); color: #cfcac1; }
+.tag { color: var(--ember); }
+
+/* mask zoom */
+.mask { position: relative; height: 100svh; overflow: hidden; background: var(--ink); }
+.mask-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); filter: contrast(1.08); }
+.mask-svg { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); }
+.mask-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,.25), rgba(10,10,10,.82)); opacity: 0; }
+.stats { position: absolute; left: var(--pad); right: var(--pad); bottom: clamp(60px, 11vh, 120px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.stat { border-top: 2px solid var(--ember); padding-top: 14px; opacity: 0; }
+.stat b { display: block; font: 400 clamp(46px, 7.4vw, 124px)/.9 Anton, sans-serif; font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 10px; }
+.mask-h { position: absolute; left: var(--pad); top: clamp(90px, 16vh, 150px); font-size: clamp(34px, 5.4vw, 86px); max-width: 14ch; opacity: 0; }
+
+/* programs */
+.prog { padding: clamp(100px, 14vw, 210px) 0 clamp(60px, 9vw, 120px); }
+.sec-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 0 var(--pad) clamp(28px, 4vw, 54px); }
+.sec-h h2 { font-size: clamp(54px, 10.5vw, 180px); }
+.sec-h h2 .ch { display: inline-block; }
+.pr { position: relative; border-top: 1.5px solid rgba(242,239,233,.22); cursor: pointer; overflow: hidden; }
+.pr:last-child { border-bottom: 1.5px solid rgba(242,239,233,.22); }
+.pr::before { content: ""; position: absolute; inset: 0; background: var(--ember); transform: scaleY(0); transform-origin: 50% 100%; transition: transform .6s var(--ease); }
+.pr.open::before { transform: none; }
+.pr-top { position: relative; display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 16px; padding: clamp(14px, 2vw, 26px) var(--pad); transition: color .4s; }
+.pr-top h3 { font-size: clamp(40px, 8.2vw, 138px); transition: transform .6s var(--ease); }
+.pr.open .pr-top { color: var(--ink); }
+.pr.open .pr-top h3 { transform: translateX(clamp(8px, 2vw, 34px)); }
+.pr-x { width: clamp(30px, 3.4vw, 52px); aspect-ratio: 1; position: relative; transition: transform .6s var(--ease); }
+.pr-x::before, .pr-x::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 3px; margin-top: -1.5px; background: currentColor; }
+.pr-x::after { transform: rotate(90deg); }
+.pr.open .pr-x { transform: rotate(135deg); }
+.pr-body { position: relative; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .7s var(--ease); color: var(--ink); }
+.pr.open .pr-body { grid-template-rows: 1fr; }
+.pr-in { overflow: hidden; min-height: 0; }
+.pr-grid { display: grid; grid-template-columns: 90px 1.1fr 1fr; gap: 16px 40px; padding: 4px var(--pad) clamp(22px, 3vw, 40px); align-items: end; }
+.pr-grid p { grid-column: 2; max-width: 40ch; font-size: clamp(17px, 1.5vw, 22px); font-weight: 500; }
+.pr-meta { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pr-meta span { border: 1.5px solid var(--ink); padding: 7px 11px; }
+.pr-ph { grid-column: 3; grid-row: 1 / span 2; aspect-ratio: 16 / 9; overflow: hidden; clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%); }
+.pr-ph img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.3); transition: transform 1.2s var(--ease); filter: grayscale(1) contrast(1.2); mix-blend-mode: multiply; }
+.pr.open .pr-ph img { transform: scale(1.02); }
+
+/* schedule */
+.sched { background: var(--bone); color: var(--ink); padding: clamp(90px, 12vw, 180px) 0; position: relative; }
+.days { display: flex; gap: 8px; padding: 0 var(--pad); overflow-x: auto; scrollbar-width: none; }
+.days::-webkit-scrollbar { display: none; }
+.days button { flex: 0 0 auto; padding: 12px 18px; border: 1.5px solid var(--ink); transition: background .3s, color .3s; }
+.days button[aria-selected="true"] { background: var(--ink); color: var(--bone); }
+.cls { margin-top: clamp(22px, 3vw, 40px); border-top: 2px solid var(--ink); }
+.cl { display: grid; grid-template-columns: minmax(84px, 1fr) 3fr 2fr 1.4fr; gap: 16px; align-items: center; padding: clamp(12px, 1.6vw, 20px) var(--pad); border-bottom: 1.5px solid rgba(10,10,10,.2); position: relative; overflow: hidden; }
+.cl > * { position: relative; }
+.cl::before { content: ""; position: absolute; inset: 0; background: var(--ink); transform: translateX(-101%); transition: transform .5s var(--ease); }
+.cl:hover::before { transform: none; }
+.cl:hover { color: var(--bone); }
+.cl time { font: 400 clamp(26px, 3.4vw, 50px)/1 Anton, sans-serif; font-variant-numeric: tabular-nums; }
+.cl h4 { font: 400 clamp(26px, 3.4vw, 50px)/1 Anton, sans-serif; text-transform: uppercase; }
+.spots { display: grid; gap: 7px; }
+.spots i { display: block; height: 5px; background: rgba(128,128,128,.35); }
+.spots i b { display: block; height: 100%; background: var(--ember); transform-origin: 0 50%; }
+
+/* pricing */
+.price { padding: clamp(100px, 14vw, 210px) 0 clamp(70px, 9vw, 130px); }
+.bill { display: inline-flex; border: 1.5px solid var(--bone); position: relative; }
+.bill button { padding: 11px 18px; position: relative; z-index: 1; transition: color .3s; }
+.bill button[aria-pressed="true"] { color: var(--ink); }
+.bill i { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: var(--bone); transition: transform .5s var(--ease); }
+.bill.yr i { transform: translateX(100%); }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 var(--pad); }
+.plan { background: var(--coal); padding: clamp(22px, 2.6vw, 38px); display: flex; flex-direction: column; gap: 22px; min-height: clamp(380px, 38vw, 540px); position: relative; overflow: hidden; transition: translate .6s var(--ease); }
+.plan:hover { translate: 0 -10px; }
+.plan.hot { background: var(--ember); color: var(--ink); }
+.plan h3 { font-size: clamp(34px, 3.6vw, 58px); }
+.amt { font: 400 clamp(84px, 10.5vw, 176px)/.8 Anton, sans-serif; display: flex; align-items: flex-start; font-variant-numeric: tabular-nums; }
+.amt sup { font-size: .32em; line-height: 1; margin: .1em .08em 0 0; }
+.amt small { font: 600 13px/1 "Barlow Condensed", sans-serif; letter-spacing: .2em; align-self: flex-end; margin: 0 0 .9em .8em; text-transform: uppercase; }
+.plan ul { list-style: none; padding: 0; display: grid; gap: 9px; margin-top: auto; }
+.plan li { padding-top: 9px; border-top: 1.5px solid rgba(128,128,128,.4); }
+.plan.hot li { border-color: rgba(10,10,10,.35); }
+.plan .btn { justify-content: center; }
+.plan.hot .btn { border-color: var(--ink); }
+.plan.hot .btn::before { background: var(--ink); }
+.plan.hot .btn:hover { color: var(--bone); }
+.badge { position: absolute; top: 22px; right: -44px; transform: rotate(38deg); background: var(--ink); color: var(--bone); padding: 7px 54px; }
+
+/* cta */
+.cta { position: relative; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 120px var(--pad); overflow: hidden; }
+.cta-bg { position: absolute; inset: 0; }
+.cta-bg img { width: 100%; height: 115%; object-fit: cover; opacity: .5; }
+.cta-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 60%, rgba(255,74,28,.3), rgba(10,10,10,.9) 62%); }
+.cta-in { position: relative; display: grid; gap: clamp(22px, 3vw, 40px); justify-items: center; }
+.cta h2 { font-size: clamp(64px, 15.5vw, 280px); }
+.cta h2 .ch { display: inline-block; }
+.cta .btn { padding: 22px 38px; font-size: 15px; }
+
+/* footer */
+footer { padding: clamp(50px, 7vw, 100px) var(--pad) 84px; border-top: 1.5px solid rgba(242,239,233,.2); }
+.f-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 30px; }
+.f-grid h5 { color: var(--mute); margin-bottom: 14px; }
+.f-grid p, .f-grid a { display: block; color: #d8d3ca; }
+.f-grid a:hover { color: var(--ember); }
+.f-big { font-size: clamp(90px, 25.6vw, 500px); text-align: center; margin: clamp(40px, 6vw, 90px) 0 0; line-height: .8; color: var(--ember); white-space: nowrap; }
+.f-note { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--mute); margin-top: 26px; }
+
+.toast { position: fixed; left: 50%; bottom: 62px; z-index: 90; transform: translate(-50%, 30px); background: var(--bone); color: var(--ink); padding: 14px 20px; opacity: 0; pointer-events: none; transition: transform .5s var(--ease), opacity .3s; text-align: center; max-width: calc(100vw - 30px); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .intro { grid-template-columns: 1fr; }
+  .intro-p { grid-column: 1; grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 22px 16px; }
+  .pr-top { grid-template-columns: 34px 1fr auto; gap: 8px; }
+  .pr-grid { grid-template-columns: 1fr; }
+  .pr-grid p, .pr-meta, .pr-ph { grid-column: 1; grid-row: auto; }
+  .cl { grid-template-columns: 76px 1fr; gap: 4px 12px; }
+  .cl .coach { grid-column: 2; }
+  .cl .spots { grid-column: 2; }
+  .plans { grid-template-columns: 1fr; }
+  .plan { min-height: 0; }
+  .plan:hover { translate: none; }
+  .f-grid { grid-template-columns: 1fr 1fr; }
+  .sec-h { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 900px) and (orientation: portrait) {
+  .hero { min-height: 640px; }
+  .hero video { object-fit: contain; height: auto; aspect-ratio: 16 / 9; top: 76px; }
+  .hero-t { display: block; position: absolute; left: var(--pad); right: var(--pad); top: calc(76px + 56.25vw + 26px); font-size: clamp(54px, 17.5vw, 120px); z-index: 2; }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: repeating-linear-gradient(-66deg, transparent 0 22px, rgba(255,74,28,.9) 22px 24px); opacity: .4; mask-image: linear-gradient(transparent, #000); -webkit-mask-image: linear-gradient(transparent, #000); }
+  .hero-b { flex-direction: column; align-items: flex-start; bottom: 64px; }
+  .scrolly { display: none; }
+  .snd span { display: none; }
+}
+@media (pointer: coarse) { .lang button { padding: 12px 9px; } .snd { padding: 12px; } }
+@media (prefers-reduced-motion: reduce) { .eq i, .scrolly i { animation: none !important; } .mask-svg { display: none; } .mask-shade, .mask-h, .stat { opacity: 1; } .mask-img { transform: none; } }
+</style>
+</head>
+<body class="locked">
+
+<canvas id="sparks" aria-hidden="true"></canvas>
+<div class="bar" aria-hidden="true"></div>
+<div class="wipe" aria-hidden="true"><i style="top:0"></i><i style="top:16.6%"></i><i style="top:33.2%"></i><i style="top:49.8%"></i><i style="top:66.4%"></i><i style="top:83%"></i></div>
+
+<div class="gate" role="dialog" aria-label="Enter Fragua" data-es-aria="Entrar a Fragua">
+  <div class="gate-in">
+    <span class="m em" data-es="Club de fuerza · Medellín">Strength club · Medellín</span>
+    <h1 class="d" aria-label="Fragua"><span>F</span><span>r</span><span>a</span><span>g</span><span>u</span><span>a</span></h1>
+    <p data-es="Este sitio suena. Elige cómo quieres entrar.">This site has sound. Choose how you want to step in.</p>
+    <div class="gate-btns">
+      <button class="btn fill m" data-enter="1"><span class="eq play" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span data-es="Entrar con sonido">Enter with sound</span></button>
+      <button class="btn m" data-enter="0" data-es="Entrar en silencio">Enter quietly</button>
+    </div>
+  </div>
+</div>
+
+<header class="nav m">
+  <a class="logo" href="#top">Fragua</a>
+  <nav class="nav-links" aria-label="Main" data-es-aria="Principal">
+    <a href="#programs" data-es="Programas">Programs</a>
+    <a href="#schedule" data-es="Horarios">Schedule</a>
+    <a href="#pricing" data-es="Planes">Membership</a>
+    <a href="#join" data-es="Únete">Join</a>
+  </nav>
+  <div class="nav-r">
+    <div class="lang" role="group" aria-label="Language" data-es-aria="Idioma">
+      <button type="button" data-setlang="en">EN</button>
+      <button type="button" data-setlang="es">ES</button>
+    </div>
+    <button class="snd" type="button" aria-pressed="false" aria-label="Toggle sound" data-es-aria="Activar o silenciar el sonido"><i class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></i><span data-es="Sonido">Sound</span></button>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <h1 data-es="Fragua. Nada fuerte se forja en frío.">Fragua. Nothing strong is forged cold.</h1>
+  <video muted playsinline loop preload="auto" aria-hidden="true"></video>
+  <div class="hero-t d" aria-hidden="true" data-es="Nada fuerte<br>se forja<br><span class='em'>en frío.</span>">Nothing strong<br>is forged<br><span class="em">cold.</span></div>
+  <div class="hero-b">
+    <p data-es="Fuerza, boxeo y acondicionamiento en una antigua fundición de Medellín. Abierto desde las 5:00.">Strength, boxing and conditioning inside an old Medellín foundry. Doors open at 5:00.</p>
+    <span class="scrolly m"><i></i><span data-es="Baja">Scroll</span></span>
+  </div>
+</section>
+
+<div class="mq d" aria-hidden="true"><div class="mq-t" data-dir="-1"></div></div>
+
+<section class="intro">
+  <span class="m tag" data-es="(01) El lugar">(01) The place</span>
+  <h2 class="d" data-split data-es="Aquí no hay espejos para posar. Hay hierro, calor <span class='em'>y gente que vuelve.</span>">No mirrors to pose in. Just iron, heat <span class="em">and people who come back.</span></h2>
+  <div class="intro-p">
+    <p data-es="Fragua nació en 2019 dentro de una fundición que llevaba treinta años apagada. Dejamos los muros, la grúa y el olor a metal. Cambiamos el horno por barras.">Fragua opened in 2019 inside a foundry that had been cold for thirty years. We kept the walls, the crane and the smell of metal. We swapped the furnace for barbells.</p>
+    <p data-es="Grupos pequeños, entrenadores que saben tu nombre y un plan que se ajusta contigo cada mes. Sin contratos eternos ni letra pequeña.">Small groups, coaches who know your name and a plan that changes with you every month. No endless contracts, no fine print.</p>
+  </div>
+</section>
+
+<section class="mask" aria-label="Fragua in numbers" data-es-aria="Fragua en cifras">
+  <img class="mask-img" src="img/interior.jpg" alt="">
+  <div class="mask-shade"></div>
+  <svg class="mask-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><mask id="mk" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="900"><rect width="1600" height="900" fill="#fff"/><text id="mt" x="800" y="655" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="560" fill="#000"></text></mask></defs>
+    <rect class="mask-r" width="1600" height="900" fill="#0a0a0a" mask="url(#mk)"/>
+  </svg>
+  <h3 class="mask-h d" data-es="Mil doscientos metros de <span class='em'>fuego.</span>">Twelve hundred metres of <span class="em">fire.</span></h3>
+  <div class="stats">
+    <div class="stat"><b data-n="1200">0</b><span class="m" data-es="m² de fundición">m² of foundry floor</span></div>
+    <div class="stat"><b data-n="64">0</b><span class="m" data-es="clases por semana">classes every week</span></div>
+    <div class="stat"><b data-n="14">0</b><span class="m" data-es="entrenadores">coaches on the floor</span></div>
+    <div class="stat"><b data-n="5" data-suf=":00">0</b><span class="m" data-es="abrimos cada mañana">doors open, every morning</span></div>
+  </div>
+</section>
+
+<section class="prog" id="programs">
+  <div class="sec-h">
+    <h2 class="d" data-split data-es="Programas">Programs</h2>
+    <span class="m tag" data-es="(02) Cuatro formas de arder">(02) Four ways to burn</span>
+  </div>
+  <div class="prs">
+    <article class="pr open">
+      <div class="pr-top"><span class="m">01</span><h3 class="d" data-es="Fuerza">Strength</h3><span class="pr-x" aria-hidden="true"></span></div>
+      <div class="pr-body"><div class="pr-in"><div class="pr-grid">
+        <p data-es="Sentadilla, peso muerto, press. Técnica primero y carga después, en grupos de ocho con un entrenador que te corrige cada repetición.">Squat, deadlift, press. Technique first, load second, in groups of eight with a coach watching every rep.</p>
+        <div class="pr-meta m"><span>60 min</span><span data-es="Máx. 8 personas">Max 8 people</span><span data-es="Todos los niveles">All levels</span></div>
+        <div class="pr-ph"><img src="img/deadlift.jpg" alt="" loading="lazy"></div>
+      </div></div></div>
+    </article>
+    <article class="pr">
+      <div class="pr-top"><span class="m">02</span><h3 class="d" data-es="Boxeo">Boxing</h3><span class="pr-x" aria-hidden="true"></span></div>
+      <div class="pr-body"><div class="pr-in"><div class="pr-grid">
+        <p data-es="Doce asaltos entre saco, sombra y manoplas. Sales sin aire y con la cabeza más limpia que cuando entraste.">Twelve rounds of bag, shadow and pad work. You leave out of breath and with a clearer head than you came in with.</p>
+        <div class="pr-meta m"><span>50 min</span><span data-es="Guantes incluidos">Gloves included</span><span data-es="Sin contacto">No contact</span></div>
+        <div class="pr-ph"><img src="img/boxer.jpg" alt="" loading="lazy"></div>
+      </div></div></div>
+    </article>
+    <article class="pr">
+      <div class="pr-top"><span class="m">03</span><h3 class="d" data-es="Motor">Engine</h3><span class="pr-x" aria-hidden="true"></span></div>
+      <div class="pr-body"><div class="pr-in"><div class="pr-grid">
+        <p data-es="Cuerdas, trineos y remos en intervalos cortos y honestos. El acondicionamiento que te deja subir escaleras sin pensarlo.">Ropes, sleds and rowers in short, honest intervals. The conditioning that makes stairs something you stop noticing.</p>
+        <div class="pr-meta m"><span>45 min</span><span data-es="Alta intensidad">High intensity</span><span data-es="Máx. 14 personas">Max 14 people</span></div>
+        <div class="pr-ph"><img src="img/ropes.jpg" alt="" loading="lazy"></div>
+      </div></div></div>
+    </article>
+    <article class="pr">
+      <div class="pr-top"><span class="m">04</span><h3 class="d" data-es="Pesas rusas">Kettlebell</h3><span class="pr-x" aria-hidden="true"></span></div>
+      <div class="pr-body"><div class="pr-in"><div class="pr-grid">
+        <p data-es="Balanceos, cargadas y levantamientos turcos. Fuerza que se mueve, para espaldas que pasan el día sentadas.">Swings, cleans and Turkish get-ups. Strength that moves, built for backs that spend the day in a chair.</p>
+        <div class="pr-meta m"><span>45 min</span><span data-es="Movilidad y fuerza">Mobility and strength</span><span data-es="Todos los niveles">All levels</span></div>
+        <div class="pr-ph"><img src="img/kettle.jpg" alt="" loading="lazy"></div>
+      </div></div></div>
+    </article>
+  </div>
+</section>
+
+<div class="mq alt d" aria-hidden="true"><div class="mq-t" data-dir="1"></div></div>
+
+<section class="sched" id="schedule">
+  <div class="sec-h">
+    <h2 class="d" data-split data-es="Horarios">Schedule</h2>
+    <span class="m" data-es="(03) Elige tu hora">(03) Pick your hour</span>
+  </div>
+  <div class="days m" role="tablist"></div>
+  <div class="cls" role="tabpanel"></div>
+</section>
+
+<section class="price" id="pricing">
+  <div class="sec-h">
+    <h2 class="d" data-split data-es="Planes">Membership</h2>
+    <div class="bill m" role="group" aria-label="Billing" data-es-aria="Facturación"><i></i><button type="button" data-bill="mo" aria-pressed="true" data-es="Mensual">Monthly</button><button type="button" data-bill="yr" aria-pressed="false" data-es="Anual −20%">Yearly −20%</button></div>
+  </div>
+  <div class="plans">
+    <article class="plan">
+      <span class="m tag" data-es="Para probar">To try it</span>
+      <h3 class="d" data-es="Chispa">Spark</h3>
+      <div class="amt"><sup>$</sup><span data-mo="29" data-yr="23">29</span><small data-es="/ mes">/ month</small></div>
+      <ul class="m"><li data-es="4 clases al mes">4 classes a month</li><li data-es="Zona libre de pesas">Open lifting floor</li><li data-es="Evaluación inicial">First-day assessment</li></ul>
+      <button class="btn m" data-demo data-es="Empezar">Start</button>
+    </article>
+    <article class="plan hot">
+      <span class="badge m" data-es="El favorito">Most picked</span>
+      <span class="m" data-es="Para quedarse">To stay</span>
+      <h3 class="d" data-es="Forja">Forge</h3>
+      <div class="amt"><sup>$</sup><span data-mo="59" data-yr="47">59</span><small data-es="/ mes">/ month</small></div>
+      <ul class="m"><li data-es="Clases ilimitadas">Unlimited classes</li><li data-es="Plan personal cada mes">A personal plan every month</li><li data-es="Un invitado al mes">One guest pass a month</li><li data-es="Casillero propio">Your own locker</li></ul>
+      <button class="btn m" data-demo data-es="Entrar a la forja">Join the forge</button>
+    </article>
+    <article class="plan">
+      <span class="m tag" data-es="Para competir">To compete</span>
+      <h3 class="d" data-es="Acero">Steel</h3>
+      <div class="amt"><sup>$</sup><span data-mo="99" data-yr="79">99</span><small data-es="/ mes">/ month</small></div>
+      <ul class="m"><li data-es="Todo lo de Forja">Everything in Forge</li><li data-es="2 sesiones 1 a 1">2 one-to-one sessions</li><li data-es="Nutrición y recuperación">Nutrition and recovery</li></ul>
+      <button class="btn m" data-demo data-es="Empezar">Start</button>
+    </article>
+  </div>
+</section>
+
+<section class="cta" id="join">
+  <div class="cta-bg" aria-hidden="true"><img src="img/ropes.jpg" alt="" loading="lazy"></div>
+  <div class="cta-in">
+    <span class="m em" data-es="(05) Primera clase gratis">(05) First class is on us</span>
+    <h2 class="d" data-split data-es="Entra al<br>fuego">Step into<br>the fire</h2>
+    <button class="btn fill m" data-demo data-es="Reserva tu clase de prueba">Book your free trial</button>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="f-grid">
+    <div><h5 class="m" data-es="Encuéntranos">Find us</h5><p>Carrera 43F #18-60<br>Barrio Colombia, Medellín</p></div>
+    <div><h5 class="m" data-es="Horario">Hours</h5><p data-es="Lun a vie · 5:00 a 22:00<br>Sáb · 7:00 a 14:00">Mon to Fri · 5:00 to 22:00<br>Sat · 7:00 to 14:00</p></div>
+    <div><h5 class="m" data-es="Contacto">Contact</h5><a href="#join">hola@fragua.club</a><a href="#join">+57 604 555 0142</a></div>
+    <div><h5 class="m" data-es="Síguenos">Follow</h5><a href="#join">Instagram</a><a href="#join">Strava</a><a href="#join">YouTube</a></div>
+  </div>
+  <div class="f-big d" aria-hidden="true">Fragua</div>
+  <div class="f-note m"><span data-es="Fragua es un negocio ficticio. Sitio demo de Webz.">Fragua is a fictional business. Demo site by Webz.</span><span>© 2026</span></div>
+</footer>
+
+<div class="toast m" role="status"></div>
+
+<script src="../vendor/gsap.min.js"></script>
+<script src="../vendor/ScrollTrigger.min.js"></script>
+<script src="../vendor/SplitText.min.js"></script>
+<script src="../vendor/lenis.min.js"></script>
+<script>
+demoI18n();
+const L = DEMO_LANG, T = demoT;
+const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+gsap.registerPlugin(ScrollTrigger, SplitText);
+
+/* ---------- sparks ---------- */
+const cv = $('#sparks'), cx = cv.getContext('2d');
+let W, H, DPR, parts = [];
+function size() { DPR = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * DPR; cv.height = H * DPR; }
+size(); addEventListener('resize', size);
+function burst(x, y, n = 26, power = 1) {
+  if (reduce) return;
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + (Math.random() - .5) * 2.8, s = (4 + Math.random() * 13) * power;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, max: 26 + Math.random() * 38, hot: Math.random() < .25 });
+  }
+  if (parts.length > 700) parts.splice(0, parts.length - 700);
+}
+gsap.ticker.add(() => {
+  if (!parts.length && !cv._dirty) return;
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.clearRect(0, 0, W, H); cv._dirty = parts.length > 0;
+  cx.globalCompositeOperation = 'lighter'; cx.lineCap = 'round';
+  parts = parts.filter(p => {
+    p.life++; p.vy += .42; p.vx *= .985; const ox = p.x, oy = p.y; p.x += p.vx; p.y += p.vy;
+    if (p.y > H - 2 && p.vy > 0) { p.y = H - 2; p.vy *= -.35; p.vx *= .6; }
+    const o = 1 - p.life / p.max; if (o <= 0) return false;
+    cx.strokeStyle = p.hot ? `rgba(255,222,170,${o})` : `rgba(255,84,30,${o})`; cx.lineWidth = p.hot ? 2.4 : 1.8;
+    cx.beginPath(); cx.moveTo(ox - p.vx * .6, oy - p.vy * .6); cx.lineTo(p.x, p.y); cx.stroke();
+    return true;
+  });
+});
+addEventListener('pointerdown', e => burst(e.clientX, e.clientY, 22));
+
+/* ---------- sound ---------- */
+const A = { music: new Audio('audio/music.mp3'), voice: new Audio(`audio/voice-${L}.mp3`), anvil: new Audio('audio/anvil.mp3') };
+A.music.loop = true; A.music.volume = 0; A.voice.volume = 1; A.anvil.volume = .55;
+let sound = false;
+const snd = $('.snd');
+function setSound(on, withVoice) {
+  sound = on; snd.classList.toggle('on', on); snd.setAttribute('aria-pressed', String(on));
+  if (on) {
+    A.music.play().catch(() => {}); gsap.to(A.music, { volume: withVoice ? .22 : .5, duration: 1.2 });
+    if (withVoice) { A.voice.currentTime = 0; A.voice.play().catch(() => {}); A.voice.onended = () => sound && gsap.to(A.music, { volume: .5, duration: 1.5 }); }
+  } else { gsap.to(A.music, { volume: 0, duration: .5, onComplete: () => A.music.pause() }); A.voice.pause(); }
+}
+function hit(v = .55) { if (!sound) return; const a = A.anvil.cloneNode(); a.volume = v; a.play().catch(() => {}); }
+snd.addEventListener('click', () => setSound(!sound, false));
+document.addEventListener('visibilitychange', () => { if (!sound) return; document.hidden ? A.music.pause() : A.music.play().catch(() => {}); });
+
+/* ---------- smooth scroll ---------- */
+let lenis = null;
+if (!reduce) {
+  lenis = new Lenis({ lerp: .1 }); lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); lenis.stop();
+}
+$$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const t = $(a.getAttribute('href')); if (!t) return; e.preventDefault(); lenis ? lenis.scrollTo(t, { duration: 1.4 }) : t.scrollIntoView(); }));
+
+/* ---------- hero video + gate ---------- */
+const vid = $('.hero video');
+vid.poster = `video/poster-${L}.jpg`; vid.src = `video/hero-${L}.mp4`;
+gsap.from('.gate h1 span', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: .06, delay: .15 });
+gsap.from('.gate-in > :not(h1)', { opacity: 0, y: 18, duration: .8, stagger: .08, delay: .5 });
+let entered = false;
+$('[data-enter="1"]').focus({ preventScroll: true });
+$$('[data-enter]').forEach(b => b.addEventListener('click', () => {
+  if (entered) return; entered = true;
+  const on = b.dataset.enter === '1';
+  if (on) { setSound(true, true); hit(.6); }
+  const r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 60, 1.3);
+  const tl = gsap.timeline();
+  tl.to('.wipe i', { left: '-60%', duration: .5, ease: 'power3.in', stagger: { each: .04, from: 'random' } })
+    .add(() => { $('.gate').remove(); document.body.classList.remove('locked'); vid.currentTime = 0; if (reduce) vid.controls = true; else vid.play().catch(() => {}); if (lenis) lenis.start(); ScrollTrigger.refresh(); })
+    .to('.wipe i', { left: '110%', duration: .6, ease: 'power3.out', stagger: { each: .04, from: 'random' } })
+    .from('.nav > *, .hero-b > *, .hero-t', { opacity: 0, y: 16, duration: .8, stagger: .08 }, '-=.3')
+    .set('.wipe', { display: 'none' });
+}));
+/* the page reacts to the hammer strike inside the film */
+let lastT = 0;
+vid.addEventListener('timeupdate', () => {
+  const t = vid.currentTime;
+  if (lastT < 5.84 && t >= 5.84 && scrollY < innerHeight * .5 && !document.hidden) {
+    burst(W / 2, H * .58, 70, 1.5); hit(.4);
+    gsap.fromTo('.hero', { x: 0 }, { x: 8, duration: .05, repeat: 5, yoyo: true, ease: 'none', clearProps: 'x' });
+  }
+  lastT = t;
+});
+ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom top', onLeave: () => vid.pause(), onEnterBack: () => entered && !reduce && vid.play().catch(() => {}) });
+gsap.to('.hero video', { scale: 1.12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+gsap.to('.bar', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
+
+/* ---------- marquees that speed up with the scroll ---------- */
+const WORDS = T(['Strength', 'Boxing', 'Engine', 'Kettlebell', 'Heat', 'Iron'], ['Fuerza', 'Boxeo', 'Motor', 'Pesas rusas', 'Calor', 'Hierro']);
+let vel = 0;
+$$('.mq-t').forEach((t, k) => {
+  const html = WORDS.map((w, i) => `<span>${i % 2 ? `<b>${w}</b>` : w} ✦</span>`).join('');
+  t.innerHTML = html + html + html + html;
+  let x = 0; const dir = +t.dataset.dir;
+  gsap.ticker.add(() => {
+    const w = t.scrollWidth / 4; x += dir * (1.4 + Math.abs(vel) * .5) * (vel < 0 ? -1 : 1);
+    x = ((x % w) - w) % w; t.style.transform = `translate3d(${x}px,0,0) skewX(${gsap.utils.clamp(-14, 14, vel * -.35)}deg)`;
+  });
+});
+if (lenis) lenis.on('scroll', e => { vel = e.velocity; }); else addEventListener('scroll', () => { vel = 0; });
+
+/* ---------- headings slam in, like the film ---------- */
+if (!reduce) $$('[data-split]').forEach(h => {
+  const sp = SplitText.create(h, { type: 'words,chars', charsClass: 'ch' });
+  gsap.from(sp.chars, { scale: 2.2, opacity: 0, duration: .5, ease: 'power4.in', stagger: .022, scrollTrigger: { trigger: h, start: 'top 82%' },
+    onComplete: () => { const r = h.getBoundingClientRect(); if (r.top < H && r.bottom > 0) { burst(r.left + r.width * .5, Math.min(r.bottom, H - 10), 34); gsap.fromTo(h, { x: -6 }, { x: 0, duration: .4, ease: 'elastic.out(1.4,.2)' }); } } });
+});
+gsap.from('.intro-p p', { opacity: 0, y: 40, duration: 1, ease: 'expo.out', stagger: .12, scrollTrigger: { trigger: '.intro-p', start: 'top 85%' } });
+
+/* ---------- text mask zoom ---------- */
+(function () {
+  const svg = $('.mask-svg'), mt = $('#mt'), word = T('FORGE', 'FORJA');
+  mt.textContent = word;
+  const portrait = innerHeight > innerWidth;
+  let ox = 742, oy = 450;
+  if (portrait) {
+    svg.setAttribute('viewBox', '0 0 900 1600');
+    $$('#mk, #mk rect, .mask-r').forEach(e => { e.setAttribute('width', 900); e.setAttribute('height', 1600); });
+    mt.setAttribute('x', 450); mt.setAttribute('y', 900); mt.setAttribute('font-size', 330);
+  }
+  const place = () => { try { const fs = +mt.getAttribute('font-size'), p = mt.getStartPositionOfChar(2); ox = p.x + fs * .1; oy = p.y - fs * .36; } catch (e) {} };
+  const build = () => {
+    if (reduce) { $$('.stat b').forEach(b => { b.textContent = (+b.dataset.n).toLocaleString(L === 'es' ? 'es-CO' : 'en-US') + (b.dataset.suf || ''); }); return; }
+    place();
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '.mask', start: 'top top', end: '+=220%', pin: true, scrub: .6, anticipatePin: 1 } });
+    tl.to(mt, { scale: 90, svgOrigin: `${ox} ${oy}`, ease: 'power3.in', duration: 1 })
+      .to('.mask-img', { scale: 1, ease: 'none', duration: 1 }, 0)
+      .set(svg, { autoAlpha: 0 })
+      .to('.mask-shade', { opacity: 1, duration: .3 })
+      .fromTo('.mask-h', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .3 }, '<')
+      .fromTo('.stat', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .3, stagger: .08 }, '<.1')
+      .to({}, { duration: .35 });
+    $$('.stat b').forEach(b => {
+      const o = { v: 0 }, n = +b.dataset.n, suf = b.dataset.suf || '';
+      tl.to(o, { v: n, duration: .5, ease: 'power2.out', onUpdate: () => { b.textContent = Math.round(o.v).toLocaleString(L === 'es' ? 'es-CO' : 'en-US') + suf; } }, 1.15);
+    });
+    ScrollTrigger.sort(); ScrollTrigger.refresh();
+  };
+  (document.fonts && document.fonts.load ? document.fonts.load('430px Anton').then(build, build) : build());
+})();
+
+/* ---------- programs accordion ---------- */
+const prs = $$('.pr');
+prs.forEach(p => {
+  const top = $('.pr-top', p); top.setAttribute('role', 'button'); top.tabIndex = 0; top.setAttribute('aria-expanded', String(p.classList.contains('open')));
+  const open = () => { if (p.classList.contains('open')) return; prs.forEach(q => { q.classList.toggle('open', q === p); $('.pr-top', q).setAttribute('aria-expanded', String(q === p)); }); hit(.18); setTimeout(() => ScrollTrigger.refresh(), 750); };
+  p.addEventListener('click', open);
+  top.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  if (matchMedia('(hover: hover)').matches) p.addEventListener('pointerenter', open);
+});
+gsap.from('.pr', { opacity: 0, y: 60, duration: 1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: '.prs', start: 'top 80%' } });
+
+/* ---------- schedule ---------- */
+const DAYS = T(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']);
+const N = { s: T('Strength', 'Fuerza'), b: T('Boxing', 'Boxeo'), e: T('Engine', 'Motor'), k: T('Kettlebell', 'Pesas rusas'), o: T('Open floor', 'Zona libre') };
+const C = ['Laura V.', 'Andrés M.', 'Sofi R.', 'Tomás G.', 'Juliana P.'];
+const PLAN = [
+  [['05:30', 's', 0, 7, 8], ['07:00', 'b', 1, 9, 14], ['12:15', 'e', 2, 6, 14], ['18:00', 's', 3, 8, 8], ['19:30', 'b', 1, 12, 14]],
+  [['05:30', 'e', 2, 10, 14], ['07:00', 'k', 4, 5, 12], ['12:15', 's', 0, 4, 8], ['18:00', 'b', 1, 14, 14], ['19:30', 'e', 2, 11, 14]],
+  [['05:30', 's', 3, 6, 8], ['07:00', 'b', 1, 8, 14], ['12:15', 'k', 4, 7, 12], ['18:00', 's', 0, 8, 8], ['19:30', 'e', 2, 9, 14]],
+  [['05:30', 'e', 2, 12, 14], ['07:00', 's', 0, 5, 8], ['12:15', 'b', 1, 6, 14], ['18:00', 'k', 4, 10, 12], ['19:30', 's', 3, 7, 8]],
+  [['05:30', 's', 0, 8, 8], ['07:00', 'e', 2, 7, 14], ['12:15', 'b', 1, 5, 14], ['17:30', 'k', 4, 6, 12], ['19:00', 'o', 3, 18, 40]],
+  [['07:00', 'b', 1, 13, 14], ['08:30', 's', 3, 8, 8], ['10:00', 'e', 2, 9, 14], ['11:30', 'o', 0, 12, 40]],
+];
+const daysEl = $('.days'), cls = $('.cls');
+function showDay(i, first) {
+  $$('button', daysEl).forEach((b, k) => b.setAttribute('aria-selected', String(k === i)));
+  const render = () => {
+    cls.innerHTML = PLAN[i].map(([t, n, c, a, m]) => `<div class="cl"><time>${t}</time><h4>${N[n]}</h4><span class="coach m">${T('Coach', 'Con')} ${C[c]}</span><div class="spots m"><span>${a >= m ? T('Full', 'Lleno') : `${m - a} ${T('spots left', 'cupos')}`}</span><i><b style="transform:scaleX(0)" data-w="${a / m}"></b></i></div></div>`).join('');
+    gsap.from('.cl', { yPercent: 60, opacity: 0, duration: .6, ease: 'expo.out', stagger: .05 });
+    gsap.to('.spots b', { scaleX: (k, el) => +el.dataset.w, duration: 1, ease: 'expo.out', stagger: .05, delay: .15 });
+  };
+  first ? render() : gsap.to('.cl', { yPercent: -40, opacity: 0, duration: .22, stagger: .02, ease: 'power2.in', onComplete: render });
+}
+daysEl.innerHTML = DAYS.map((d, i) => `<button type="button" role="tab">${d}</button>`).join('');
+$$('button', daysEl).forEach((b, i) => b.addEventListener('click', () => { showDay(i); hit(.15); }));
+const today = (new Date().getDay() + 6) % 7;
+ScrollTrigger.create({ trigger: '.sched', start: 'top 70%', once: true, onEnter: () => showDay(today > 5 ? 0 : today, true) });
+
+/* ---------- pricing ---------- */
+$$('[data-bill]').forEach(b => b.addEventListener('click', () => {
+  const yr = b.dataset.bill === 'yr'; $('.bill').classList.toggle('yr', yr);
+  $$('[data-bill]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $$('.amt span').forEach((s, i) => { const o = { v: +s.textContent }; gsap.to(o, { v: +s.dataset[yr ? 'yr' : 'mo'], duration: .7, delay: i * .06, ease: 'power3.out', onUpdate: () => { s.textContent = Math.round(o.v); } }); });
+  hit(.15);
+}));
+gsap.from('.plan', { y: 120, opacity: 0, rotate: (i) => [-4, 0, 4][i], duration: 1.1, ease: 'expo.out', stagger: .1, scrollTrigger: { trigger: '.plans', start: 'top 82%' } });
+
+/* ---------- cta + footer ---------- */
+gsap.to('.cta-bg img', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.cta', start: 'top bottom', end: 'bottom top', scrub: true } });
+const ember = () => { const r = $('.cta').getBoundingClientRect(); if (r.top < H && r.bottom > 0 && !document.hidden) burst(Math.random() * W, Math.min(H, r.bottom) - 4, 5, .8); };
+if (!reduce) setInterval(ember, 260);
+gsap.from('.f-big', { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.f-big', start: 'top 95%' } });
+const toast = $('.toast'); let tt;
+$$('[data-demo]').forEach(b => b.addEventListener('click', e => {
+  hit(.6); const r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 80, 1.4);
+  toast.textContent = T('This is a demo by Webz. Your real site would take the booking here.', 'Este es un demo de Webz. Tu sitio real tomaría la reserva aquí.');
+  toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 3600);
+}));
+addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
+</script>
+</body>
+</html>

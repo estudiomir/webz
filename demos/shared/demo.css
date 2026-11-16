@@ -1,0 +1,8 @@
+.webz-tag { position: fixed; left: 14px; bottom: 14px; z-index: 9000; display: inline-flex; align-items: center; gap: 10px; padding: 9px 12px 9px 11px; border-radius: 999px; background: rgba(12,12,13,.82); color: #f3f3f1; font: 500 11px/1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.14); transition: transform .35s cubic-bezier(.2,.8,.2,1), background .2s; }
+.webz-tag b { font-weight: 700; }
+.webz-tag:hover { transform: translateY(-2px); background: rgba(12,12,13,.95); }
+.webz-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: webz-pulse 2s ease-in-out infinite; }
+.webz-tag-back { padding-left: 10px; border-left: 1px solid rgba(255,255,255,.22); opacity: .7; }
+@keyframes webz-pulse { 50% { opacity: .25; } }
+@media (max-width: 560px) { .webz-tag { left: 10px; bottom: 10px; font-size: 10px; padding: 8px 10px; } }
+@media (prefers-reduced-motion: reduce) { .webz-tag-dot { animation: none; } }

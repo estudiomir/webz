@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-es-title="Niebla · Café de altura (demo de Webz)">Niebla · Cloud-forest coffee (Webz demo)</title>
+<meta name="description" content="Niebla is a fictional coffee roaster. A demo site designed and built by Webz.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#efe9dd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/demo.css">
+<link rel="preload" as="image" href="img/farm.jpg">
+<script src="../shared/demo.js"></script>
+<style>
+:root {
+  --cream: #efe9dd; --cream-2: #e4dccb; --forest: #18241c; --forest-2: #223328; --ink: #141a15;
+  --ochre: #b67819; --ochre-d: #8a5c12; --mist: #a9b3a6;
+  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(18px, 4vw, 56px);
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+* { box-sizing: border-box; margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body { background: var(--cream); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body.loading { overflow: hidden; height: 100vh; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
+.mono { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; }
+.serif { font-family: var(--serif); font-weight: 340; letter-spacing: -.02em; line-height: 1; font-variation-settings: "opsz" 144; }
+.serif i { font-weight: 300; }
+.line-mask { overflow: hidden; display: block; padding-bottom: .08em; margin-bottom: -.08em; }
+
+/* Grain */
+.grain { position: fixed; inset: -50%; z-index: 8000; pointer-events: none; opacity: .07; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: grain 1.2s steps(6) infinite; }
+@keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-4%)} 60%{transform:translate(-2%,3%)} 80%{transform:translate(4%,1%)} 100%{transform:translate(0,0)} }
+
+/* Preloader */
+.loader { position: fixed; inset: 0; z-index: 9500; background: var(--forest); color: var(--cream); display: grid; place-items: center; }
+.loader-word { font-size: clamp(64px, 16vw, 240px); filter: blur(22px); opacity: .0; }
+.loader-row { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(var(--pad) + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: flex-end; }
+.loader-count { font-family: var(--serif); font-size: clamp(40px, 6vw, 84px); font-weight: 300; line-height: .9; font-variant-numeric: tabular-nums; }
+.loader-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--ochre); transform: scaleX(0); transform-origin: left; }
+
+/* Nav */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 900; display: flex; align-items: center; justify-content: space-between; padding: calc(14px + env(safe-area-inset-top, 0px)) var(--pad) 14px; mix-blend-mode: difference; color: #fff; pointer-events: none; }
+.nav > * { pointer-events: auto; }
+.brand { font-family: var(--serif); font-size: 26px; font-weight: 400; letter-spacing: -.02em; }
+.nav-links { display: flex; gap: 6px; align-items: center; }
+.nav-links a, .lang button { padding: 8px 12px; border-radius: 999px; }
+.nav-links a { position: relative; }
+.nav-links a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease); }
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.lang { display: inline-flex; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; padding: 2px; margin-left: 8px; }
+.lang button { padding: 6px 10px; opacity: .6; }
+.lang button[aria-pressed="true"] { background: #fff; color: #000; opacity: 1; }
+@media (max-width: 720px) { .nav-links a { display: none; } }
+
+/* Hero */
+.hero { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
+.hero-stage { position: absolute; inset: 0; display: grid; place-items: center; }
+.hero h1 { font-size: clamp(46px, 9.2vw, 168px); text-align: center; position: relative; z-index: 3; padding: 0 var(--pad); }
+.hero h1 i { color: var(--ochre); }
+.hero-kicker { position: absolute; top: 22%; left: 0; right: 0; text-align: center; z-index: 3; }
+.cards { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.card { position: absolute; left: 50%; top: 50%; width: var(--w); aspect-ratio: var(--ar, 4/5); margin: calc(var(--w) * -0.6) 0 0 calc(var(--w) * -0.5); border-radius: 6px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(20,26,21,.45); will-change: transform; }
+.card img { width: 100%; height: 100%; object-fit: cover; }
+.hero-reveal { position: absolute; inset: 0; z-index: 4; clip-path: circle(0% at 50% 50%); will-change: clip-path; color: var(--cream); }
+.hero-reveal img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); will-change: transform; }
+.hero-reveal::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24,36,28,.28), rgba(24,36,28,.05) 40%, rgba(24,36,28,.55)); }
+.hero-reveal .hero-stage { z-index: 2; }
+.hero-reveal h1 i { color: #f0c479; }
+.hero-foot { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(26px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: flex-end; z-index: 5; color: var(--cream); mix-blend-mode: difference; }
+.hero-foot p { max-width: 30ch; font-size: 15px; line-height: 1.4; }
+.scroll-hint { display: inline-flex; align-items: center; gap: 10px; }
+.scroll-hint i { width: 1px; height: 34px; background: currentColor; display: block; transform-origin: top; animation: hint 1.8s var(--ease) infinite; }
+@keyframes hint { 0%{transform:scaleY(0)} 50%{transform:scaleY(1); transform-origin: top} 51%{transform-origin: bottom} 100%{transform:scaleY(0); transform-origin: bottom} }
+
+/* Statement */
+.statement { padding: clamp(110px, 18vw, 260px) var(--pad); max-width: 1500px; margin: 0 auto; }
+.statement .mono { color: var(--ochre-d); margin-bottom: 34px; display: flex; gap: 14px; align-items: center; }
+.statement .mono::before { content: ""; width: 36px; height: 1px; background: currentColor; }
+.statement p { font-size: clamp(30px, 5.1vw, 84px); line-height: 1.08; }
+.statement .w { opacity: .14; display: inline-block; }
+
+/* Pour sequence */
+.pour { position: relative; height: 100vh; height: 100svh; background: #0e1410; color: var(--cream); overflow: hidden; }
+.pour canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pour::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(8,12,9,.7) 100%), linear-gradient(90deg, rgba(8,12,9,.75), transparent 55%); pointer-events: none; }
+.chapters { position: absolute; z-index: 2; left: var(--pad); top: 0; bottom: 0; width: min(520px, 78vw); display: grid; align-items: center; }
+.chapter { grid-area: 1 / 1; opacity: 0; visibility: hidden; }
+.chapter .mono { color: #f0c479; display: block; margin-bottom: 18px; }
+.chapter h2 { font-size: clamp(44px, 6.6vw, 112px); margin-bottom: 20px; }
+.chapter p { max-width: 36ch; color: rgba(239,233,221,.82); }
+.rail { position: absolute; z-index: 2; right: var(--pad); top: 50%; transform: translateY(-50%); display: grid; gap: 14px; justify-items: end; }
+.rail span { display: flex; align-items: center; gap: 10px; opacity: .4; transition: opacity .4s; }
+.rail span::after { content: ""; width: 22px; height: 1px; background: currentColor; transition: width .5s var(--ease); }
+.rail span.on { opacity: 1; }
+.rail span.on::after { width: 54px; background: #f0c479; }
+.pour-progress { position: absolute; z-index: 2; left: 0; bottom: 0; height: 2px; width: 100%; background: #f0c479; transform: scaleX(0); transform-origin: left; }
+
+/* Journey (horizontal) */
+.journey { position: relative; height: 100vh; height: 100svh; overflow: hidden; background: var(--cream); }
+.journey-type { position: absolute; top: 50%; left: 0; white-space: nowrap; font-size: clamp(120px, 27vw, 460px); color: var(--cream-2); transform: translateY(-54%); will-change: transform; padding-left: 6vw; }
+.journey-type i { color: transparent; -webkit-text-stroke: 1.5px var(--ochre); }
+.track { position: absolute; top: 0; left: 0; height: 100%; display: flex; align-items: center; gap: clamp(28px, 6vw, 110px); padding: 0 12vw 0 38vw; will-change: transform; }
+.step { flex: none; width: clamp(240px, 30vw, 460px); will-change: transform; }
+.step:nth-child(odd) { margin-top: -9vh; }
+.step:nth-child(even) { margin-top: 12vh; }
+.step figure { background: #fbf8f1; padding: 10px 10px 16px; box-shadow: 0 40px 70px -40px rgba(20,26,21,.55); border-radius: 3px; }
+.step .ph { overflow: hidden; aspect-ratio: 4 / 5; }
+.step .ph img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.15); }
+.step figcaption { display: flex; justify-content: space-between; padding-top: 12px; color: #5d6659; }
+.step h3 { font-family: var(--serif); font-weight: 360; font-size: clamp(24px, 2.4vw, 38px); letter-spacing: -.02em; margin: 20px 0 8px; }
+.step p { font-size: 15px; color: #4c554a; max-width: 34ch; }
+.journey-head { position: absolute; left: var(--pad); top: calc(84px + env(safe-area-inset-top, 0px)); z-index: 2; color: var(--ochre-d); display: flex; gap: 14px; align-items: center; }
+.journey-head::before { content: ""; width: 36px; height: 1px; background: currentColor; }
+
+/* Menu */
+.menu { background: var(--forest); color: var(--cream); padding: clamp(90px, 13vw, 190px) var(--pad); position: relative; }
+.menu-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(40px, 6vw, 90px); }
+.menu-top h2 { font-size: clamp(48px, 8.4vw, 150px); }
+.menu-top h2 i { color: #f0c479; }
+.menu-top p { max-width: 34ch; color: rgba(239,233,221,.7); }
+.rows { border-top: 1px solid rgba(239,233,221,.2); }
+.row { position: relative; display: grid; grid-template-columns: 60px 1fr auto; gap: 16px; align-items: baseline; padding: clamp(18px, 2.4vw, 34px) 0; border-bottom: 1px solid rgba(239,233,221,.2); cursor: default; }
+.row::before { content: ""; position: absolute; inset: 0 calc(var(--pad) * -1); background: var(--cream); transform: scaleY(0); transform-origin: bottom; transition: transform .5s var(--ease); z-index: 0; }
+.row > * { position: relative; z-index: 1; transition: color .3s, transform .5s var(--ease); }
+.row .n { color: #f0c479; }
+.row .name { font-family: var(--serif); font-weight: 340; font-size: clamp(28px, 4.6vw, 72px); letter-spacing: -.02em; line-height: 1; }
+.row .name small { display: block; font-family: var(--sans); font-size: 14px; letter-spacing: 0; color: rgba(239,233,221,.6); margin-top: 10px; font-weight: 400; transition: color .3s; }
+.row .price { font-family: var(--mono); font-size: 14px; }
+@media (hover: hover) {
+  .row:hover::before { transform: scaleY(1); transform-origin: top; }
+  .row:hover > * { color: var(--forest); }
+  .row:hover .name { transform: translateX(18px); }
+  .row:hover .name small { color: #4c554a; }
+  .row:hover .n { color: var(--ochre); }
+}
+.floater { position: fixed; top: 0; left: 0; width: clamp(200px, 22vw, 340px); aspect-ratio: 4 / 5; z-index: 700; pointer-events: none; overflow: hidden; border-radius: 4px; opacity: 0; transform: translate(-50%, -50%) scale(.6); will-change: transform, opacity; box-shadow: 0 40px 70px -30px rgba(0,0,0,.6); }
+.floater img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .35s; }
+.floater img.on { opacity: 1; }
+@media (hover: none) { .floater { display: none; } }
+
+/* Beans */
+.beans { padding: clamp(90px, 13vw, 190px) var(--pad); }
+.beans-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: end; margin-bottom: clamp(40px, 6vw, 90px); }
+.beans-top h2 { font-size: clamp(44px, 7vw, 124px); }
+.beans-top p { max-width: 40ch; justify-self: end; color: #4c554a; }
+.bags { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 2vw, 28px); perspective: 1400px; }
+.bag { position: relative; border-radius: 8px; overflow: hidden; background: #e7dfcf; transform-style: preserve-3d; will-change: transform; }
+.bag .shot { aspect-ratio: 4 / 5; overflow: hidden; }
+.bag .shot img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform: scale(1.85) translateY(4%); filter: var(--f, none); }
+.bag .tagline { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%) translateZ(40px); width: 31%; background: var(--cream); color: var(--forest); padding: 10px 8px 9px; text-align: center; border-radius: 2px; box-shadow: 0 6px 14px -8px rgba(0,0,0,.5); }
+.bag .tagline b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(15px, 1.7vw, 26px); letter-spacing: -.02em; line-height: 1; }
+.bag .tagline span { display: block; font-family: var(--mono); font-size: 8px; letter-spacing: .14em; text-transform: uppercase; margin-top: 6px; color: var(--ochre-d); }
+.bag .info { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 18px 20px 20px; }
+.bag .info h3 { font-family: var(--serif); font-weight: 360; font-size: 26px; letter-spacing: -.02em; line-height: 1.1; }
+.bag .info p { font-size: 14px; color: #4c554a; }
+.bag .add { flex: none; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--forest); display: grid; place-items: center; transition: background .3s, color .3s, transform .5s var(--ease); }
+.bag:hover .add { background: var(--forest); color: var(--cream); transform: rotate(90deg); }
+@media (max-width: 860px) { .beans-top { grid-template-columns: 1fr; } .beans-top p { justify-self: start; } .bags { grid-template-columns: 1fr; } }
+
+/* Visit */
+.visit { position: relative; color: var(--cream); background: var(--forest); }
+.visit-img { position: relative; height: 120vh; overflow: hidden; clip-path: inset(12% 14% 12% 14% round 10px); will-change: clip-path; }
+.visit-img img { position: absolute; left: 0; top: -15%; width: 100%; height: 130%; object-fit: cover; will-change: transform; }
+.visit-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24,36,28,.1), rgba(24,36,28,.62)); }
+.visit-copy { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; padding: var(--pad); padding-bottom: clamp(60px, 9vw, 130px); }
+.visit-copy h2 { font-size: clamp(50px, 10vw, 180px); margin-bottom: 30px; }
+.visit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)) 1fr; gap: 28px; align-items: end; }
+.visit-grid .mono { color: #f0c479; display: block; margin-bottom: 8px; }
+.btn { justify-self: end; display: inline-flex; align-items: center; gap: 14px; padding: 18px 26px; border-radius: 999px; background: var(--cream); color: var(--forest); font-weight: 500; position: relative; overflow: hidden; will-change: transform; }
+.btn::before { content: ""; position: absolute; inset: 0; background: var(--ochre); transform: translateY(101%); transition: transform .5s var(--ease); border-radius: inherit; }
+.btn:hover::before { transform: translateY(0); }
+.btn span { position: relative; }
+@media (max-width: 860px) { .visit-grid { grid-template-columns: 1fr 1fr; } .btn { justify-self: start; grid-column: 1 / -1; } .visit-img { height: 100vh; } }
+
+/* Footer */
+.foot { background: var(--forest); color: var(--cream); padding: 60px 0 calc(70px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.marquee { display: flex; white-space: nowrap; will-change: transform; }
+.marquee span { font-family: var(--serif); font-weight: 300; font-size: clamp(90px, 20vw, 330px); letter-spacing: -.04em; line-height: .95; padding-right: .25em; flex: none; }
+.marquee span i { color: #f0c479; }
+.foot-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 40px var(--pad) 0; color: rgba(239,233,221,.6); }
+
+.toast { position: fixed; left: 50%; bottom: 70px; transform: translate(-50%, 30px); background: var(--ink); color: var(--cream); padding: 14px 20px; border-radius: 999px; font-size: 14px; opacity: 0; pointer-events: none; transition: all .5s var(--ease); z-index: 9100; white-space: nowrap; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 720px) {
+  .rail { display: none; }
+  .pour::after { background: linear-gradient(180deg, rgba(8,12,9,.3), rgba(8,12,9,.74) 42%, rgba(8,12,9,.82)); }
+  .chapter p { color: var(--cream); }
+  .hero-kicker { top: calc(50% - 76px); padding: 0 var(--pad); font-size: 10.5px; }
+}
+@media (pointer: coarse) { .lang button { padding: 10px 13px; } }
+@media (prefers-reduced-motion: reduce) { .grain, .scroll-hint i { animation: none; } }
+</style>
+</head>
+<body class="loading">
+<div class="grain" aria-hidden="true"></div>
+
+<div class="loader" aria-hidden="true">
+  <div class="loader-word serif">Niebla</div>
+  <div class="loader-row">
+    <span class="mono" data-es="Café de altura · Medellín">Cloud-forest coffee · Medellín</span>
+    <span class="loader-count">0</span>
+  </div>
+  <div class="loader-bar"></div>
+</div>
+
+<header class="nav">
+  <a class="brand" href="#top">Niebla</a>
+  <nav class="nav-links mono">
+    <a href="#origen" data-es="Origen">Origin</a>
+    <a href="#carta" data-es="Carta">Menu</a>
+    <a href="#granos" data-es="Granos">Beans</a>
+    <a href="#visita" data-es="Visítanos">Visit</a>
+    <div class="lang" role="group" aria-label="Language / Idioma">
+      <button type="button" data-setlang="en">EN</button>
+      <button type="button" data-setlang="es">ES</button>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-stage">
+      <p class="hero-kicker mono" data-es="Tostadores de café de altura · Desde 2014">Cloud-forest coffee roasters · Since 2014</p>
+      <h1 class="serif" data-hero data-es="Café que crece<br>entre <i>las nubes.</i>">Coffee grown<br>in <i>the clouds.</i></h1>
+    </div>
+    <div class="cards" aria-hidden="true">
+      <div class="card" style="--w:clamp(110px,15vw,250px);--x:-38vw;--y:-24vh;--r:-7deg" data-d=".9"><img src="img/cherries.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(90px,11vw,180px);--x:-21vw;--y:29vh;--r:5deg;--ar:1" data-d=".5"><img src="img/latte.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(120px,17vw,280px);--x:36vw;--y:-20vh;--r:6deg" data-d="1.1"><img src="img/barista.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(100px,13vw,210px);--x:26vw;--y:30vh;--r:-4deg;--ar:5/4" data-d=".7"><img src="img/roaster.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(70px,8vw,130px);--x:-8vw;--y:-36vh;--r:3deg;--ar:1" data-d=".35"><img src="img/pour.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(80px,9vw,150px);--x:-41vw;--y:22vh;--r:-3deg" data-d=".6"><img src="img/bag.jpg" alt=""></div>
+      <div class="card" style="--w:clamp(70px,8vw,140px);--x:10vw;--y:38vh;--r:8deg;--ar:5/4" data-d=".4"><img src="img/interior.jpg" alt=""></div>
+    </div>
+    <div class="hero-reveal" aria-hidden="true">
+      <img src="img/farm.jpg" alt="">
+      <div class="hero-stage">
+        <p class="hero-kicker mono" data-es="Finca La Bruma · Jardín, Antioquia · 1.950 m">Finca La Bruma · Jardín, Antioquia · 1,950 m</p>
+        <h1 class="serif" data-es="Café que crece<br>entre <i>las nubes.</i>">Coffee grown<br>in <i>the clouds.</i></h1>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p data-es="Lo cultivamos a 1.950 metros, lo tostamos en lotes pequeños y te lo servimos a pocas cuadras.">Grown at 1,950 metres, roasted in small batches, and poured a few blocks from where you're standing.</p>
+      <span class="scroll-hint mono"><span data-es="Desliza">Scroll</span><i></i></span>
+    </div>
+  </section>
+
+  <section class="statement" id="origen">
+    <div class="mono" data-es="Nuestra idea">Our idea</div>
+    <p class="serif" data-words data-es="La niebla baja cada mañana y frena el sol. El grano madura más despacio, guarda más azúcar y llega a tu taza con sabor a panela, mandarina y flor de café. Nosotros solo procuramos no estorbar.">The mist rolls in every morning and slows the sun. The cherries ripen later, hold more sugar and reach your cup tasting of panela, mandarin and coffee blossom. Our only job is to stay out of the way.</p>
+  </section>
+
+  <section class="pour" aria-label="From bean to cup">
+    <canvas></canvas>
+    <div class="chapters">
+      <article class="chapter">
+        <span class="mono">01 / 03</span>
+        <h2 class="serif" data-es="Se cosecha<br><i>a mano.</i>">Picked<br><i>by hand.</i></h2>
+        <p data-es="Solo cerezas maduras, una por una. Trabajamos con once familias de Jardín y les pagamos el doble del precio de mercado.">Only ripe cherries, one at a time. We work with eleven families in Jardín and pay twice the market price.</p>
+      </article>
+      <article class="chapter">
+        <span class="mono">02 / 03</span>
+        <h2 class="serif" data-es="Se tuesta<br><i>sin afán.</i>">Roasted<br><i>without rush.</i></h2>
+        <p data-es="Lotes de doce kilos, tres veces por semana. Cada bolsa lleva la fecha de tueste escrita a mano.">Twelve-kilo batches, three times a week. Every bag carries its roast date, written by hand.</p>
+      </article>
+      <article class="chapter">
+        <span class="mono">03 / 03</span>
+        <h2 class="serif" data-es="Se sirve<br><i>como debe ser.</i>">Poured<br><i>the right way.</i></h2>
+        <p data-es="Agua a 93 grados, 28 segundos de extracción y alguien que de verdad quiere que te guste.">Water at 93 degrees, a 28-second extraction, and someone who truly wants you to love it.</p>
+      </article>
+    </div>
+    <div class="rail mono" aria-hidden="true">
+      <span data-es="Cosecha">Harvest</span><span data-es="Tueste">Roast</span><span data-es="Taza">Cup</span>
+    </div>
+    <div class="pour-progress"></div>
+  </section>
+
+  <section class="journey" aria-label="The journey">
+    <div class="journey-head mono" data-es="De la finca a la barra">From the farm to the bar</div>
+    <div class="journey-type serif" aria-hidden="true" data-es="De la niebla <i>a tu taza</i>">From the mist <i>to your cup</i></div>
+    <div class="track">
+      <div class="step"><figure><div class="ph"><img src="img/cherries.jpg" alt="" loading="lazy"></div><figcaption class="mono"><span>01</span><span data-es="Mayo a julio">May to July</span></figcaption></figure><h3 data-es="La cosecha">The harvest</h3><p data-es="Tres pasadas por cada árbol para llevarnos solo lo que está en su punto.">Three passes over every tree, so we only take what's ready.</p></div>
+      <div class="step"><figure><div class="ph"><img src="img/farm.jpg" alt="" loading="lazy"></div><figcaption class="mono"><span>02</span><span data-es="36 horas">36 hours</span></figcaption></figure><h3 data-es="El beneficio">The washing</h3><p data-es="Fermentación lenta en tanques abiertos, con el frío de la montaña como aliado.">A slow ferment in open tanks, with the mountain cold on our side.</p></div>
+      <div class="step"><figure><div class="ph"><img src="img/roaster.jpg" alt="" loading="lazy"></div><figcaption class="mono"><span>03</span><span>205 °C</span></figcaption></figure><h3 data-es="El tueste">The roast</h3><p data-es="Tueste medio para que sepa a su origen y no a humo.">A medium roast, so it tastes of where it's from and not of smoke.</p></div>
+      <div class="step"><figure><div class="ph"><img src="img/pour.jpg" alt="" loading="lazy"></div><figcaption class="mono"><span>04</span><span>1 : 16</span></figcaption></figure><h3 data-es="La preparación">The brew</h3><p data-es="Filtrado a mano en la barra, frente a ti, sin secretos.">Filtered by hand at the bar, in front of you, no secrets.</p></div>
+      <div class="step"><figure><div class="ph"><img src="img/latte.jpg" alt="" loading="lazy"></div><figcaption class="mono"><span>05</span><span data-es="Tu mesa">Your table</span></figcaption></figure><h3 data-es="La taza">The cup</h3><p data-es="Y un croissant de almendra recién salido, porque sí.">With an almond croissant straight from the oven, just because.</p></div>
+    </div>
+  </section>
+
+  <section class="menu" id="carta">
+    <div class="menu-top">
+      <h2 class="serif" data-split data-es="La <i>carta</i>">The <i>menu</i></h2>
+      <p data-es="Corta a propósito. Preferimos hacer seis cosas muy bien que veinte más o menos.">Short on purpose. We'd rather do six things beautifully than twenty well enough.</p>
+    </div>
+    <div class="rows">
+      <div class="row" data-img="img/pour.jpg"><span class="n mono">01</span><span class="name" data-es="Filtrado a mano<small>V60 · Huila lavado · notas de mandarina</small>">Pour-over<small>V60 · washed Huila · mandarin notes</small></span><span class="price">$ 14.000</span></div>
+      <div class="row" data-img="img/latte.jpg"><span class="n mono">02</span><span class="name">Flat white<small data-es="Doble espresso · leche de finca vecina">Double espresso · milk from the farm next door</small></span><span class="price">$ 12.000</span></div>
+      <div class="row" data-img="img/roaster.jpg"><span class="n mono">03</span><span class="name">Espresso<small data-es="Tostado el martes · 28 segundos">Roasted on Tuesday · 28 seconds</small></span><span class="price">$ 8.000</span></div>
+      <div class="row" data-img="img/cherries.jpg"><span class="n mono">04</span><span class="name" data-es="Cáscara fría<small>Infusión de cereza de café · limón mandarino</small>">Cold cascara<small>Coffee-cherry infusion · mandarin lime</small></span><span class="price">$ 11.000</span></div>
+      <div class="row" data-img="img/barista.jpg"><span class="n mono">05</span><span class="name" data-es="Tinto campesino<small>Con panela, como en la finca</small>">Farmhouse tinto<small>With panela, the way it's made on the farm</small></span><span class="price">$ 6.000</span></div>
+      <div class="row" data-img="img/interior.jpg"><span class="n mono">06</span><span class="name" data-es="Croissant de almendra<small>Horneado aquí, cada mañana a las 6</small>">Almond croissant<small>Baked here, every morning at 6</small></span><span class="price">$ 9.500</span></div>
+    </div>
+  </section>
+
+  <section class="beans" id="granos">
+    <div class="beans-top">
+      <h2 class="serif" data-split data-es="Llévate<br><i>la montaña.</i>">Take the<br><i>mountain home.</i></h2>
+      <p data-es="Tres orígenes, tostados esta semana. Te los enviamos en grano o molidos para tu método.">Three origins, roasted this week. Shipped whole-bean or ground for the way you brew.</p>
+    </div>
+    <div class="bags">
+      <article class="bag" data-tilt>
+        <div class="shot"><img src="img/bag.jpg" alt="" loading="lazy"></div>
+        <div class="tagline"><b>La Bruma</b><span data-es="Lavado">Washed</span></div>
+        <div class="info"><div><h3>La Bruma</h3><p data-es="Mandarina · panela · 340 g">Mandarin · panela · 340 g</p></div><button class="add" data-toast aria-label="Add to cart" data-es-aria="Agregar al carrito">+</button></div>
+      </article>
+      <article class="bag" data-tilt style="--f:hue-rotate(-95deg) saturate(1.25) brightness(1.02)">
+        <div class="shot"><img src="img/bag.jpg" alt="" loading="lazy"></div>
+        <div class="tagline"><b>Alba</b><span data-es="Honey">Honey</span></div>
+        <div class="info"><div><h3>Alba</h3><p data-es="Durazno · miel · 340 g">Peach · honey · 340 g</p></div><button class="add" data-toast aria-label="Add to cart" data-es-aria="Agregar al carrito">+</button></div>
+      </article>
+      <article class="bag" data-tilt style="--f:hue-rotate(85deg) saturate(.8) brightness(.9)">
+        <div class="shot"><img src="img/bag.jpg" alt="" loading="lazy"></div>
+        <div class="tagline"><b>Sereno</b><span data-es="Natural">Natural</span></div>
+        <div class="info"><div><h3>Sereno</h3><p data-es="Mora · cacao · 340 g">Blackberry · cacao · 340 g</p></div><button class="add" data-toast aria-label="Add to cart" data-es-aria="Agregar al carrito">+</button></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="visit" id="visita">
+    <div class="visit-img"><img src="img/interior.jpg" alt="" loading="lazy"></div>
+    <div class="visit-copy">
+      <h2 class="serif" data-split data-es="Pasa y<br><i>quédate un rato.</i>">Come in,<br><i>stay a while.</i></h2>
+      <div class="visit-grid">
+        <div><span class="mono" data-es="Dónde">Where</span><p>Calle 9 # 43-12<br>El Poblado, Medellín</p></div>
+        <div><span class="mono" data-es="Cuándo">When</span><p data-es="Lunes a sábado, 7:00 a 19:00<br>Domingos, 8:00 a 14:00">Monday to Saturday, 7am to 7pm<br>Sundays, 8am to 2pm</p></div>
+        <div><span class="mono" data-es="Escríbenos">Say hello</span><p>hola@niebla.cafe<br>+57 604 555 0142</p></div>
+        <a class="btn" href="#visita" data-toast data-magnetic><span data-es="Reserva una mesa">Reserve a table</span><span>→</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="marquee" aria-hidden="true">
+    <span>Niebla <i>·</i> <span data-es="café de altura" style="font-size:inherit;padding:0">cloud-forest coffee</span> <i>·</i></span>
+    <span>Niebla <i>·</i> <span data-es="café de altura" style="font-size:inherit;padding:0">cloud-forest coffee</span> <i>·</i></span>
+  </div>
+  <div class="foot-row mono">
+    <span>© 2026 Niebla Tostadores</span>
+    <span data-es="Marca ficticia. Sitio demo diseñado y construido por Webz.">Fictional brand. Demo site designed and built by Webz.</span>
+  </div>
+</footer>
+
+<div class="floater" aria-hidden="true"></div>
+<div class="toast" role="status" data-es="Esto es un demo. En tu sitio, aquí pasa la magia.">This is a demo. On your site, this is where the magic happens.</div>
+
+<script src="../vendor/gsap.min.js"></script>
+<script src="../vendor/ScrollTrigger.min.js"></script>
+<script src="../vendor/SplitText.min.js"></script>
+<script src="../vendor/lenis.min.js"></script>
+<script>
+(function () {
+  demoI18n();
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* Smooth scroll */
+  var lenis = null;
+  if (!reduce) {
+    lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    lenis.stop();
+  }
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href');
+      if (id.length < 2 || a.hasAttribute('data-toast')) { e.preventDefault(); return; }
+      var t = $(id); if (!t) return;
+      e.preventDefault();
+      if (lenis) lenis.scrollTo(t, { duration: 1.6 }); else t.scrollIntoView();
+    });
+  });
+
+  /* Pour sequence frames */
+  var FRAMES = 96, frames = [], loadedFrames = 0;
+  var canvas = $('.pour canvas'), ctx = canvas.getContext('2d'), current = -1, wanted = 0;
+  function sizeCanvas() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(canvas.clientHeight * dpr);
+    current = -1; draw();
+  }
+  function draw() {
+    var i = wanted, img = frames[i];
+    while (i > 0 && !(img && img.complete && img.naturalWidth)) { i--; img = frames[i]; }
+    if (!img || !img.complete || !img.naturalWidth || i === current) return;
+    current = i;
+    var cw = canvas.width, ch = canvas.height, s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    var w = img.naturalWidth * s, h = img.naturalHeight * s;
+    ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+  }
+  function loadFrames() {
+    for (var i = 0; i < FRAMES; i++) {
+      var im = new Image();
+      im.decoding = 'async';
+      im.onload = function () { loadedFrames++; if (current < 0) draw(); };
+      im.src = 'img/seq/f-' + String(i + 1).padStart(3, '0') + '.webp';
+      frames.push(im);
+    }
+  }
+
+  /* Preloader: waits for the hero imagery */
+  var heroImgs = $$('.hero img'), done = 0, shown = { v: 0 };
+  var count = $('.loader-count'), bar = $('.loader-bar');
+  function bump() { done++; gsap.to(shown, { v: done / heroImgs.length * 100, duration: .6, ease: 'power2.out', onUpdate: function () { count.textContent = Math.round(shown.v); gsap.set(bar, { scaleX: shown.v / 100 }); } }); }
+  heroImgs.forEach(function (im) { if (im.complete) bump(); else { im.addEventListener('load', bump); im.addEventListener('error', bump); } });
+  gsap.to('.loader-word', { opacity: 1, filter: 'blur(0px)', duration: 1.8, ease: 'power2.out' });
+  var started = false;
+  function start() {
+    if (started) return; started = true;
+    loadFrames();
+    var tl = gsap.timeline({ onComplete: function () { document.body.classList.remove('loading'); if (lenis) lenis.start(); ScrollTrigger.refresh(); } });
+    tl.to('.loader-word', { yPercent: -18, opacity: 0, filter: 'blur(18px)', duration: .8, ease: 'power2.in' }, .15)
+      .to('.loader-row', { opacity: 0, duration: .4 }, .15)
+      .to('.loader', { yPercent: -100, duration: 1.1, ease: 'expo.inOut' }, .55)
+      .add(intro, .9)
+      .set('.loader', { display: 'none' });
+  }
+  var poll = setInterval(function () { if (done >= heroImgs.length && document.fonts.status === 'loaded') { clearInterval(poll); setTimeout(start, 650); } }, 80);
+  setTimeout(function () { clearInterval(poll); start(); }, 6000);
+
+  /* Hero */
+  var cards = $$('.card');
+  cards.forEach(function (c) { gsap.set(c, { x: 0, y: 0, scale: .2, opacity: 0, rotation: 0 }); });
+  var heroSplit = new SplitText('[data-hero]', { type: 'lines', mask: 'lines' });
+  gsap.set(heroSplit.lines, { yPercent: 110 });
+  gsap.set(['.hero-stage > .hero-kicker', '.hero-foot'], { opacity: 0 });
+  function intro() {
+    var tl = gsap.timeline();
+    tl.to(heroSplit.lines, { yPercent: 0, duration: 1.3, ease: 'expo.out', stagger: .1 })
+      .to(cards, { x: function (i, el) { return getComputedStyle(el).getPropertyValue('--x'); }, y: function (i, el) { return getComputedStyle(el).getPropertyValue('--y'); }, rotation: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--r')); }, scale: 1, opacity: 1, duration: 1.6, ease: 'expo.out', stagger: .06 }, .1)
+      .to(['.hero-stage > .hero-kicker', '.hero-foot'], { opacity: 1, duration: 1 }, .7);
+    return tl;
+  }
+  /* cards drift with the pointer */
+  if (fine && !reduce) {
+    var inner = cards.map(function (c) { return { el: c.firstElementChild, d: parseFloat(c.dataset.d) }; });
+    var movers = inner.map(function (o) { return { x: gsap.quickTo(o.el, 'x', { duration: 1.2, ease: 'power3.out' }), y: gsap.quickTo(o.el, 'y', { duration: 1.2, ease: 'power3.out' }) }; });
+    inner.forEach(function (o) { gsap.set(o.el, { scale: 1.18 }); });
+    window.addEventListener('pointermove', function (e) {
+      var nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
+      inner.forEach(function (o, i) { movers[i].x(-nx * 26 * o.d); movers[i].y(-ny * 26 * o.d); });
+    }, { passive: true });
+  }
+  var heroTl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=170%', pin: true, scrub: .6, anticipatePin: 1 } });
+  heroTl.to(cards, { xPercent: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--x')) * 9; }, yPercent: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--y')) * 7; }, scale: 1.7, rotation: '+=14', ease: 'power2.in', duration: 1 }, 0)
+    .to('.hero-reveal', { clipPath: 'circle(75% at 50% 50%)', ease: 'power2.inOut', duration: 1 }, .08)
+    .to('.hero-reveal img', { scale: 1, ease: 'none', duration: 1.4 }, .08)
+    .to('.hero-foot', { opacity: 0, duration: .3 }, 1.1)
+    .to('.hero-reveal .hero-stage', { yPercent: -12, opacity: 0, duration: .4 }, 1.15);
+
+  /* Statement: words light up as you read */
+  var words = new SplitText('[data-words]', { type: 'words', wordsClass: 'w' });
+  gsap.to(words.words, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: '[data-words]', start: 'top 78%', end: 'bottom 45%', scrub: .5 } });
+
+  /* Pour sequence */
+  var chapters = $$('.chapter'), rail = $$('.rail span'), prog = $('.pour-progress');
+  chapters.forEach(function (c) { c._split = new SplitText($('h2', c), { type: 'lines', mask: 'lines' }); });
+  var active = -1;
+  function setChapter(i) {
+    if (i === active) return;
+    var prev = chapters[active], next = chapters[i];
+    active = i;
+    rail.forEach(function (r, k) { r.classList.toggle('on', k === i); });
+    if (prev) gsap.to(prev, { autoAlpha: 0, y: -24, duration: .45, ease: 'power2.in', overwrite: true });
+    if (next) {
+      gsap.set(next, { y: 0 });
+      gsap.to(next, { autoAlpha: 1, duration: .3, delay: prev ? .35 : 0, overwrite: true });
+      gsap.fromTo(next._split.lines, { yPercent: 110 }, { yPercent: 0, duration: 1, ease: 'expo.out', stagger: .08, delay: prev ? .35 : 0 });
+      gsap.fromTo([$('.mono', next), $('p', next)], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .8, stagger: .12, delay: prev ? .5 : .15 });
+    }
+  }
+  ScrollTrigger.create({
+    trigger: '.pour', start: 'top top', end: '+=320%', pin: true, scrub: .4, anticipatePin: 1,
+    onUpdate: function (self) {
+      var p = self.progress;
+      wanted = Math.min(FRAMES - 1, Math.round(p * (FRAMES - 1)));
+      draw();
+      gsap.set(prog, { scaleX: p });
+      setChapter(p < .04 ? -1 : p < .36 ? 0 : p < .68 ? 1 : 2);
+    },
+    onLeaveBack: function () { setChapter(-1); }
+  });
+  window.addEventListener('resize', sizeCanvas); sizeCanvas();
+
+  /* Journey: sideways walk */
+  var track = $('.track'), type = $('.journey-type');
+  var dist = function () { return Math.max(0, track.scrollWidth - innerWidth); };
+  var jt = gsap.timeline({ scrollTrigger: { trigger: '.journey', start: 'top top', end: function () { return '+=' + dist(); }, pin: true, scrub: .8, invalidateOnRefresh: true, anticipatePin: 1 } });
+  jt.to(track, { x: function () { return -dist(); }, ease: 'none' }, 0)
+    .to(type, { x: function () { return -(type.scrollWidth - innerWidth * .7); }, ease: 'none' }, 0);
+  $$('.step').forEach(function (s, i) {
+    gsap.set(s, { rotation: i % 2 ? 2.2 : -2.2 });
+    gsap.fromTo($('img', s), { xPercent: -6 }, { xPercent: 6, ease: 'none', scrollTrigger: { trigger: s, containerAnimation: jt, start: 'left right', end: 'right left', scrub: true } });
+  });
+  if (!reduce) {
+    var skew = gsap.quickTo('.step', 'skewX', { duration: .5, ease: 'power3.out' });
+    ScrollTrigger.create({ trigger: '.journey', start: 'top bottom', end: 'bottom top', onUpdate: function (self) { skew(gsap.utils.clamp(-7, 7, self.getVelocity() / -320)); } });
+  }
+
+  /* Headline reveals */
+  $$('[data-split]').forEach(function (h) {
+    var sp = new SplitText(h, { type: 'lines', mask: 'lines' });
+    gsap.from(sp.lines, { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
+  });
+  gsap.from('.row', { opacity: 0, y: 30, duration: .9, ease: 'power3.out', stagger: .07, scrollTrigger: { trigger: '.rows', start: 'top 80%' } });
+  gsap.from('.bag', { opacity: 0, y: 70, duration: 1.1, ease: 'expo.out', stagger: .12, scrollTrigger: { trigger: '.bags', start: 'top 82%' } });
+
+  /* Menu: photo follows the pointer */
+  var floater = $('.floater');
+  if (fine) {
+    var rows = $$('.row'), imgs = {};
+    rows.forEach(function (r) { var im = new Image(); im.src = r.dataset.img; im.alt = ''; floater.appendChild(im); imgs[r.dataset.img] = im; });
+    var fx = gsap.quickTo(floater, 'x', { duration: .6, ease: 'power3.out' }), fy = gsap.quickTo(floater, 'y', { duration: .6, ease: 'power3.out' }), fr = gsap.quickTo(floater, 'rotation', { duration: .8, ease: 'power3.out' });
+    var lastX = 0;
+    $('.rows').addEventListener('pointermove', function (e) { fx(e.clientX + 170); fy(e.clientY); fr(gsap.utils.clamp(-10, 10, (e.clientX - lastX) * .6)); lastX = e.clientX; });
+    rows.forEach(function (r) { r.addEventListener('pointerenter', function () { Object.keys(imgs).forEach(function (k) { imgs[k].classList.toggle('on', k === r.dataset.img); }); gsap.to(floater, { opacity: 1, scale: 1, xPercent: -50, yPercent: -50, duration: .5, ease: 'expo.out' }); }); });
+    var hideFloater = function () { gsap.to(floater, { opacity: 0, scale: .6, duration: .4, ease: 'power2.in', overwrite: 'auto' }); };
+    $('.rows').addEventListener('pointerleave', hideFloater);
+    var px = 0, py = 0;
+    window.addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; }, { passive: true });
+    ScrollTrigger.create({ onUpdate: function () { var el = document.elementFromPoint(px, py); if (!el || !el.closest('.rows')) hideFloater(); } });
+  }
+
+  /* Bags tilt */
+  if (fine && !reduce) $$('[data-tilt]').forEach(function (el) {
+    var rx = gsap.quickTo(el, 'rotationX', { duration: .6, ease: 'power3.out' }), ry = gsap.quickTo(el, 'rotationY', { duration: .6, ease: 'power3.out' });
+    el.addEventListener('pointermove', function (e) { var b = el.getBoundingClientRect(); ry(((e.clientX - b.left) / b.width - .5) * 14); rx(((e.clientY - b.top) / b.height - .5) * -12); });
+    el.addEventListener('pointerleave', function () { rx(0); ry(0); });
+  });
+
+  /* Visit: window opens */
+  gsap.to('.visit-img', { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none', scrollTrigger: { trigger: '.visit', start: 'top 85%', end: 'top 10%', scrub: .5 } });
+  gsap.fromTo('.visit-img img', { yPercent: -6 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.visit', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  /* Magnetic button */
+  if (fine && !reduce) $$('[data-magnetic]').forEach(function (el) {
+    var mx = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3.out' }), my = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3.out' });
+    el.addEventListener('pointermove', function (e) { var b = el.getBoundingClientRect(); mx((e.clientX - b.left - b.width / 2) * .35); my((e.clientY - b.top - b.height / 2) * .35); });
+    el.addEventListener('pointerleave', function () { mx(0); my(0); });
+  });
+
+  /* Footer marquee reacts to scroll direction */
+  var mq = gsap.to('.marquee', { xPercent: -50, ease: 'none', duration: 22, repeat: -1 });
+  if (reduce) mq.pause();
+  ScrollTrigger.create({ onUpdate: function (self) { gsap.to(mq, { timeScale: self.direction * (1 + Math.min(6, Math.abs(self.getVelocity()) / 400)), duration: .3, overwrite: true }); gsap.to(mq, { timeScale: self.direction, duration: 1.2, delay: .3 }); } });
+
+  /* Demo toast */
+  var toast = $('.toast'), tt;
+  $$('[data-toast]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove('on'); }, 2600); }); });
+
+  window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+})();
+</script>
+</body>
+</html>

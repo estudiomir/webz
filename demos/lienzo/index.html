@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-es-title="Lienzo · Ropa hecha en calma (demo de Webz)">Lienzo · Clothing made slowly (Webz demo)</title>
+<meta name="description" content="Lienzo is a fictional clothing label. A demo site designed and built by Webz.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ece6da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/demo.css">
+<script src="../shared/demo.js"></script>
+<style>
+:root {
+  --bone: #ece6da; --ink: #0d0d0d; --cobalt: #1f3bff; --grey: #8a857b;
+  --serif: "Instrument Serif", "Times New Roman", serif;
+  --sans: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(16px, 3vw, 44px);
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+* { box-sizing: border-box; margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body { background: var(--bone); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body.loading { overflow: hidden; height: 100vh; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; background: none; border: 0; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 3px; }
+.mono { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.serif { font-family: var(--serif); font-weight: 400; letter-spacing: -.025em; line-height: .92; }
+
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+[data-gl] { opacity: 0; }
+.no-gl [data-gl] { opacity: 1; }
+
+/* Preloader */
+.loader { position: fixed; inset: 0; z-index: 9500; background: var(--ink); color: var(--bone); display: flex; flex-direction: column; justify-content: space-between; padding: var(--pad); padding-bottom: calc(var(--pad) + env(safe-area-inset-bottom, 0px)); }
+.loader-top { display: flex; justify-content: space-between; }
+.loader-count { font-size: clamp(110px, 26vw, 420px); line-height: .8; display: flex; overflow: hidden; align-self: flex-end; font-variant-numeric: tabular-nums; }
+.loader-line { height: 1px; background: rgba(236,230,218,.25); position: relative; }
+.loader-line i { position: absolute; inset: 0; background: var(--bone); transform: scaleX(0); transform-origin: left; }
+
+/* Cursor */
+.cursor { position: fixed; top: 0; left: 0; z-index: 9200; pointer-events: none; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; mix-blend-mode: difference; display: grid; place-items: center; }
+.cursor span { color: #000; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: 0; white-space: nowrap; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+
+/* Nav */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 900; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: calc(14px + env(safe-area-inset-top, 0px)) var(--pad) 14px; mix-blend-mode: difference; color: #fff; }
+.nav-left { display: flex; gap: 22px; }
+.nav-right { display: flex; gap: 18px; justify-content: flex-end; align-items: center; }
+.brand { font-family: var(--serif); font-size: 28px; letter-spacing: -.02em; line-height: 1; }
+.nav a.l { position: relative; overflow: hidden; display: inline-block; }
+.lang { display: inline-flex; gap: 2px; }
+.lang button { padding: 4px 6px; opacity: .5; }
+.lang button[aria-pressed="true"] { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 720px) { .nav { grid-template-columns: auto 1fr; } .nav-left { display: none; } .nav-right { white-space: nowrap; gap: 14px; } }
+@media (pointer: coarse) { .lang button { padding: 12px 8px; } }
+
+/* Hero */
+.hero { position: relative; height: 100vh; height: 100svh; color: #fff; overflow: hidden; }
+.hero-gl { position: absolute; inset: 0; }
+.hero-gl img { width: 100%; height: 100%; object-fit: cover; }
+.hero-meta { position: absolute; left: var(--pad); right: var(--pad); top: 22vh; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; text-shadow: 0 1px 16px rgba(0,0,0,.55); }
+.hero-meta p { max-width: 24ch; }
+.hero-word { position: absolute; left: 0; right: 0; bottom: calc(-1.5vw + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 37vw; line-height: .78; letter-spacing: -.05em; mix-blend-mode: difference; white-space: nowrap; pointer-events: none; }
+.hero-word .ch { display: inline-block; will-change: transform; }
+.hero-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; gap: 10px; align-items: center; padding: 10px 14px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); background: rgba(255,255,255,.08); }
+.hero-hint i { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: blink 1.4s infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+
+/* Manifesto */
+.manifesto { padding: clamp(110px, 17vw, 260px) var(--pad) clamp(80px, 10vw, 160px); display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.manifesto .mono { grid-column: 1 / span 3; padding-top: 12px; opacity: .66; }
+.manifesto h2 { grid-column: 4 / -1; font-size: clamp(34px, 5.6vw, 96px); line-height: 1; }
+.manifesto h2 em { color: var(--cobalt); }
+@media (max-width: 800px) { .manifesto .mono, .manifesto h2 { grid-column: 1 / -1; } }
+
+/* Looks */
+.looks { padding: 0 var(--pad) clamp(90px, 12vw, 190px); }
+.looks-head { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid currentColor; padding-top: 14px; margin-bottom: clamp(40px, 6vw, 90px); }
+.looks-head h2 { font-size: clamp(38px, 5vw, 80px); }
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(14px, 2vw, 30px); align-items: start; }
+.look { cursor: none; }
+.look:nth-child(1) { grid-column: 1 / span 5; }
+.look:nth-child(2) { grid-column: 8 / span 4; margin-top: 22vh; }
+.look:nth-child(3) { grid-column: 3 / span 4; margin-top: 6vh; }
+.look:nth-child(4) { grid-column: 8 / span 5; margin-top: -12vh; }
+.look .ph { aspect-ratio: 3 / 4; overflow: hidden; }
+.look .ph img { width: 100%; height: 100%; object-fit: cover; }
+.look .cap { display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; }
+.look .cap b { font-weight: 500; text-transform: none; font-family: var(--sans); font-size: 15px; letter-spacing: 0; }
+.look .cap span:last-child { opacity: .72; }
+@media (max-width: 800px) { .look:nth-child(n) { grid-column: 1 / -1; margin-top: 0; } .look:nth-child(even) { padding-left: 18vw; } .look:nth-child(odd) { padding-right: 18vw; } .look { cursor: auto; } }
+
+/* Collections */
+.coll { position: relative; height: 100vh; height: 100svh; color: #fff; overflow: hidden; }
+.coll-gl { position: absolute; inset: 0; }
+.coll-gl img { width: 100%; height: 100%; object-fit: cover; }
+.coll-inner { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: var(--pad); text-align: center; }
+.coll-item { font-size: clamp(54px, 10.5vw, 190px); opacity: .32; transition: opacity .5s var(--ease), transform .7s var(--ease), letter-spacing .7s var(--ease); display: block; line-height: .92; padding: 0 .2em; }
+.coll-item.on { opacity: 1; font-style: italic; }
+.coll-foot { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(26px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: flex-end; }
+.coll-count { font-family: var(--serif); font-size: clamp(40px, 5vw, 76px); line-height: .9; }
+.coll-count small { font-size: .4em; opacity: .7; vertical-align: top; }
+.coll-bar { position: absolute; left: var(--pad); right: var(--pad); top: calc(84px + env(safe-area-inset-top, 0px)); display: flex; justify-content: space-between; }
+
+/* Atelier */
+.atelier { padding: clamp(100px, 14vw, 220px) var(--pad); display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; align-items: end; }
+.atelier .ph { grid-column: 1 / span 5; aspect-ratio: 4 / 5; overflow: hidden; }
+.atelier .ph img { width: 100%; height: 100%; object-fit: cover; }
+.atelier .txt { grid-column: 7 / -1; }
+.atelier h2 { font-size: clamp(44px, 7vw, 124px); margin-bottom: 30px; }
+.atelier h2 em { color: var(--cobalt); }
+.atelier p { max-width: 46ch; color: #4a463f; margin-bottom: 44px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid currentColor; }
+.stats div { padding: 16px 0; }
+.stats b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(50px, 6.4vw, 110px); line-height: .95; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.stats span { opacity: .66; }
+@media (max-width: 800px) { .atelier .ph, .atelier .txt { grid-column: 1 / -1; } }
+
+/* Wide */
+.wide { padding: 0 var(--pad) clamp(90px, 12vw, 190px); }
+.wide .ph { aspect-ratio: 16 / 8; overflow: hidden; }
+.wide .ph img { width: 100%; height: 100%; object-fit: cover; }
+.wide .cap { display: flex; justify-content: space-between; padding-top: 12px; opacity: .66; }
+@media (max-width: 800px) { .wide .ph { aspect-ratio: 4 / 5; } }
+
+/* Footer */
+.foot { color: var(--bone); padding: clamp(80px, 10vw, 150px) var(--pad) calc(70px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.foot-top { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
+.foot-top h2 { font-size: clamp(40px, 6vw, 104px); }
+.news { display: flex; border-bottom: 1px solid currentColor; padding-bottom: 12px; gap: 12px; }
+.news input { flex: 1; min-width: 0; font-size: 18px; outline: none; }
+.news input::placeholder { color: rgba(236,230,218,.45); }
+.news button { display: inline-flex; gap: 8px; align-items: center; }
+.news-note { margin-top: 12px; color: rgba(236,230,218,.5); min-height: 1.4em; }
+.foot-word { font-size: 36.5vw; line-height: .8; letter-spacing: -.05em; text-align: center; margin: clamp(40px, 6vw, 90px) calc(var(--pad) * -1) 0; white-space: nowrap; }
+.foot-word .ch { display: inline-block; }
+.foot-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: rgba(236,230,218,.5); padding-top: 26px; }
+@media (max-width: 800px) { .foot-top { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) { .hero-hint i { animation: none; } }
+</style>
+</head>
+<body class="loading">
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<div class="loader" aria-hidden="true">
+  <div class="loader-top mono"><span>Lienzo</span><span data-es="Otoño · Invierno 26">Autumn · Winter 26</span></div>
+  <div>
+    <div class="loader-count serif">000</div>
+    <div class="loader-line"><i></i></div>
+  </div>
+</div>
+
+<div class="cursor" aria-hidden="true"><span data-es="Ver">View</span></div>
+
+<header class="nav mono">
+  <nav class="nav-left">
+    <a class="l" href="#coleccion" data-es="Colección">Collection</a>
+    <a class="l" href="#lineas" data-es="Líneas">Lines</a>
+    <a class="l" href="#atelier">Atelier</a>
+  </nav>
+  <a class="brand" href="#top">Lienzo</a>
+  <div class="nav-right">
+    <div class="lang" role="group" aria-label="Language / Idioma">
+      <button type="button" data-setlang="en">EN</button><span>/</span><button type="button" data-setlang="es">ES</button>
+    </div>
+    <span data-es="Bolsa (0)">Bag (0)</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-gl" data-hero-gl><img data-gl src="img/campaign.jpg" alt=""></div>
+    <div class="hero-meta mono">
+      <p data-es="Otoño · Invierno 26<br>Colección 09, «Viento»">Autumn · Winter 26<br>Collection 09, "Viento"</p>
+      <p style="text-align:right" data-es="Ropa hecha en calma<br>Medellín, Colombia">Clothing made slowly<br>Medellín, Colombia</p>
+    </div>
+    <div class="hero-hint mono"><i></i><span data-hint data-es="Mueve el cursor para revelar">Move your cursor to reveal</span></div>
+    <h1 class="hero-word serif" aria-label="Lienzo">Lienzo</h1>
+  </section>
+
+  <section class="manifesto">
+    <span class="mono" data-es="(Manifiesto)">(Manifesto)</span>
+    <h2 class="serif" data-lines data-es="Hacemos menos ropa y la hacemos despacio. Cuarenta piezas por temporada, cortadas y cosidas en Medellín, numeradas a mano. <em>Para que te duren más que la moda.</em>">We make fewer clothes, and we make them slowly. Forty pieces a season, cut and sewn in Medellín, numbered by hand. <em>Made to outlast fashion.</em></h2>
+  </section>
+
+  <section class="looks" id="coleccion">
+    <div class="looks-head">
+      <h2 class="serif" data-es="Colección 09">Collection 09</h2>
+      <span class="mono" data-es="04 looks · Envíos a todo el mundo">04 looks · Worldwide shipping</span>
+    </div>
+    <div class="grid">
+      <a class="look" href="#coleccion" data-noop><div class="ph"><img data-gl data-fx="look" src="img/look1.jpg" alt="Model in an oversized ecru suit"></div><div class="cap mono"><span>01</span><b data-es="Traje Arena, lana y lino">Arena suit, wool and linen</b><span>$ 1.480.000</span></div></a>
+      <a class="look" href="#coleccion" data-noop><div class="ph"><img data-gl data-fx="look" src="img/look2.jpg" alt="Model in a black overshirt"></div><div class="cap mono"><span>02</span><b data-es="Sobrecamisa Carbón">Carbón overshirt</b><span>$ 620.000</span></div></a>
+      <a class="look" href="#coleccion" data-noop><div class="ph"><img data-gl data-fx="look" src="img/look3.jpg" alt="Model in a cobalt knit dress"></div><div class="cap mono"><span>03</span><b data-es="Vestido Cobalto, punto">Cobalto dress, knit</b><span>$ 890.000</span></div></a>
+      <a class="look" href="#coleccion" data-noop><div class="ph"><img data-gl data-fx="look" src="img/look4.jpg" alt="Model in a cream trench coat"></div><div class="cap mono"><span>04</span><b data-es="Gabardina Sal">Sal trench coat</b><span>$ 1.150.000</span></div></a>
+    </div>
+  </section>
+
+  <section class="coll" id="lineas" data-dark>
+    <div class="coll-gl" data-coll-gl><img data-gl src="img/detail.jpg" alt=""></div>
+    <div class="coll-bar mono"><span data-es="(Líneas)">(Lines)</span><span data-es="Sigue bajando">Keep scrolling</span></div>
+    <div class="coll-inner">
+      <a class="coll-item serif on" href="#lineas" data-noop data-i="0" data-es="Sastrería">Tailoring</a>
+      <a class="coll-item serif" href="#lineas" data-noop data-i="1" data-es="Punto">Knitwear</a>
+      <a class="coll-item serif" href="#lineas" data-noop data-i="2" data-es="Abrigos">Outerwear</a>
+      <a class="coll-item serif" href="#lineas" data-noop data-i="3" data-es="Objetos">Objects</a>
+    </div>
+    <div class="coll-foot">
+      <div class="coll-count"><span data-coll-n>01</span><small> / 04</small></div>
+      <span class="mono" data-coll-desc></span>
+    </div>
+  </section>
+
+  <section class="atelier" id="atelier">
+    <div class="ph"><img data-gl data-fx="look" src="img/detail.jpg" alt="Close-up of ecru wool and linen fabric"></div>
+    <div class="txt">
+      <h2 class="serif" data-lines data-es="Doce manos,<br><em>un solo taller.</em>">Twelve hands,<br><em>one workshop.</em></h2>
+      <p data-es="Cada prenda pasa por las mismas seis personas, de principio a fin. Usamos lana, lino y algodón sin mezclas sintéticas, y si algún día se rompe, te la arreglamos gratis.">Every piece passes through the same six people, start to finish. We use wool, linen and cotton with no synthetic blends, and if it ever tears, we mend it for free.</p>
+      <div class="stats">
+        <div><b data-count="40">0</b><span class="mono" data-es="Piezas por temporada">Pieces a season</span></div>
+        <div><b data-count="12">0</b><span class="mono" data-es="Manos">Hands</span></div>
+        <div><b data-count="100" data-suffix="%">0</b><span class="mono" data-es="Fibras naturales">Natural fibres</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <div class="ph"><img data-gl data-fx="look" src="img/profile.jpg" alt="Profile portrait against a cobalt backdrop"></div>
+    <div class="cap mono"><span data-es="Campaña «Viento»">"Viento" campaign</span><span data-es="Fotografiada en La Guajira">Shot in La Guajira</span></div>
+  </section>
+</main>
+
+<footer class="foot" data-dark>
+  <div class="foot-top">
+    <h2 class="serif" data-lines data-es="La próxima colección se agota antes de anunciarse.">The next collection sells out before it's announced.</h2>
+    <div>
+      <form class="news"><input type="email" required placeholder="you@email.com" aria-label="Email"><button class="mono" type="submit"><span data-es="Avísame">Tell me first</span> →</button></form>
+      <p class="news-note mono" role="status"></p>
+    </div>
+  </div>
+  <div class="foot-word serif" aria-hidden="true">Lienzo</div>
+  <div class="foot-row mono">
+    <span>© 2026 Lienzo Atelier</span>
+    <span data-es="Marca ficticia. Sitio demo diseñado y construido por Webz.">Fictional brand. Demo site designed and built by Webz.</span>
+  </div>
+</footer>
+
+<script src="../vendor/gsap.min.js"></script>
+<script src="../vendor/ScrollTrigger.min.js"></script>
+<script src="../vendor/SplitText.min.js"></script>
+<script src="../vendor/lenis.min.js"></script>
+<script type="module">
+import * as THREE from '../vendor/three.min.js';
+
+demoI18n();
+gsap.registerPlugin(ScrollTrigger, SplitText);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const $ = (s, c) => (c || document).querySelector(s);
+const $$ = (s, c) => [...(c || document).querySelectorAll(s)];
+if (!fine) $('[data-hint]').textContent = demoT('Drag to reveal', 'Desliza el dedo para revelar');
+
+/* ---------- Smooth scroll ---------- */
+let lenis = null;
+if (!reduce) {
+  lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  lenis.stop();
+}
+$$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  if (a.hasAttribute('data-noop')) return;
+  const t = $(a.getAttribute('href')); if (!t) return;
+  lenis ? lenis.scrollTo(t, { duration: 1.6 }) : t.scrollIntoView();
+}));
+
+/* ---------- WebGL ---------- */
+const NOISE = `
+vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);m=m*m;m=m*m;vec3 x=2.0*fract(p*C.www)-1.0;vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.0*dot(m,g);}
+vec2 cover(vec2 uv, vec2 size, vec2 img){float rs=size.x/size.y;float ri=img.x/img.y;vec2 s=rs<ri?vec2(img.x*size.y/img.y,size.y):vec2(size.x,img.y*size.x/img.x);vec2 o=(rs<ri?vec2((s.x-size.x)/2.0,0.0):vec2(0.0,(s.y-size.y)/2.0))/s;return uv*size/s+o;}
+`;
+const VERT = `
+uniform float uVel; varying vec2 vUv;
+void main(){ vUv=uv; vec4 wp=modelMatrix*vec4(position,1.0); wp.y+=sin(uv.x*3.14159265)*uVel*70.0; wp.x+=sin(uv.y*3.14159265)*uVel*-10.0; gl_Position=projectionMatrix*viewMatrix*wp; }`;
+
+const FRAG_LOOK = `
+precision highp float; uniform sampler2D uTex; uniform vec2 uSize, uImg; uniform float uVel, uHover, uShow, uTime, uPar; varying vec2 vUv;
+${NOISE}
+void main(){
+  if (vUv.y > uShow) discard;
+  float zoom = 1.12 + 0.07*uHover + (1.0-uShow)*0.25;
+  vec2 uv = (vUv-0.5)/zoom + 0.5;
+  uv.y += (1.0-uShow)*0.06;
+  uv.y += uPar*0.05;
+  float n = snoise(vUv*3.0 + uTime*0.25);
+  uv += n*0.012*uHover;
+  vec2 c = cover(uv, uSize, uImg);
+  float s = uVel*0.035 + 0.004*uHover;
+  float r = texture2D(uTex, c + vec2(0.0, s)).r; float g = texture2D(uTex, c).g; float b = texture2D(uTex, c - vec2(0.0, s)).b;
+  gl_FragColor = vec4(r,g,b,1.0);
+}`;
+
+const FRAG_HERO = `
+precision highp float; uniform sampler2D uA, uB, uTrail; uniform vec2 uSize, uImgA, uImgB; uniform float uTime, uIntro, uScroll; varying vec2 vUv;
+${NOISE}
+void main(){
+  float m = texture2D(uTrail, vUv).r;
+  float n = snoise(vUv*vec2(3.0,2.2) + uTime*0.12);
+  float n2 = snoise(vUv*9.0 - uTime*0.2);
+  float mask = smoothstep(0.34, 0.5, m + n*0.14*m + n2*0.05*m);
+  vec2 uv = (vUv-0.5)/(1.0 + (1.0-uIntro)*0.35 + uScroll*0.12) + 0.5;
+  vec2 dis = vec2(n, n2)*0.03*m;
+  vec2 ca = cover(uv + dis, uSize, uImgA);
+  vec2 cb = cover((uv-0.5)/1.06+0.5 - dis, uSize, uImgB);
+  float sh = 0.006*m;
+  vec3 A = vec3(texture2D(uA, ca+vec2(sh,0.0)).r, texture2D(uA, ca).g, texture2D(uA, ca-vec2(sh,0.0)).b);
+  vec3 B = texture2D(uB, cb).rgb;
+  vec3 col = mix(A, B, mask);
+  float edge = smoothstep(0.0,0.5,mask)*(1.0-smoothstep(0.5,1.0,mask));
+  col += edge*0.10;
+  col *= 1.0 - uScroll*0.5;
+  col = mix(vec3(0.051), col, uIntro);
+  gl_FragColor = vec4(col,1.0);
+}`;
+
+const FRAG_COLL = `
+precision highp float; uniform sampler2D uA, uB; uniform vec2 uSize, uImgA, uImgB; uniform float uProg, uTime; varying vec2 vUv;
+${NOISE}
+void main(){
+  float n = snoise(vUv*vec2(2.0,4.0) + 3.0)*0.5+0.5;
+  float edge = vUv.x*0.55 + n*0.45;
+  float t = smoothstep(edge-0.12, edge+0.12, uProg*1.24-0.12);
+  vec2 uv = (vUv-0.5)/1.08 + 0.5; uv.x += sin(uTime*0.2)*0.006;
+  vec2 ca = cover(uv + vec2(t*0.12, 0.0), uSize, uImgA);
+  vec2 cb = cover(uv - vec2((1.0-t)*0.12, 0.0), uSize, uImgB);
+  vec3 col = mix(texture2D(uA, ca).rgb, texture2D(uB, cb).rgb, t);
+  float band = t*(1.0-t)*4.0; col += band*0.08;
+  col *= 0.62;
+  gl_FragColor = vec4(col,1.0);
+}`;
+
+let gl = null;
+const planes = [];
+const state = { vel: 0, time: 0 };
+const loader = new THREE.TextureLoader();
+const texCache = {};
+let toLoad = 0, loaded = 0;
+function tex(src) {
+  if (texCache[src]) return texCache[src];
+  toLoad++;
+  const t = loader.load(src, () => { loaded++; }, undefined, () => { loaded++; });
+  t.colorSpace = THREE.SRGBColorSpace; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false;
+  return (texCache[src] = t);
+}
+const imgSize = t => t.image ? new THREE.Vector2(t.image.naturalWidth || t.image.width, t.image.naturalHeight || t.image.height) : new THREE.Vector2(16, 9);
+
+try {
+  const canvas = $('#gl');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 10, 2000);
+  camera.position.z = 800;
+  const geo = new THREE.PlaneGeometry(1, 1, 24, 24);
+  gl = { renderer, scene, camera, geo };
+
+  function resize() {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.fov = 2 * Math.atan(h / 2 / 800) * 180 / Math.PI; camera.updateProjectionMatrix();
+  }
+  resize(); addEventListener('resize', resize);
+
+  function addPlane(el, frag, uniforms) {
+    const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: frag, uniforms: Object.assign({ uSize: { value: new THREE.Vector2(1, 1) }, uVel: { value: 0 }, uTime: { value: 0 } }, uniforms) });
+    const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; scene.add(mesh);
+    const p = { el, mesh, u: mat.uniforms }; planes.push(p); return p;
+  }
+
+  /* looks and still images */
+  $$('img[data-fx="look"]').forEach(img => {
+    const t = tex(img.getAttribute('src'));
+    const p = addPlane(img.parentElement, FRAG_LOOK, { uTex: { value: t }, uImg: { value: new THREE.Vector2(16, 9) }, uHover: { value: 0 }, uShow: { value: 0 }, uPar: { value: 0 } });
+    p.tex = t; p.par = true;
+    const host = img.closest('.look') || img.parentElement;
+    host.addEventListener('pointerenter', () => gsap.to(p.u.uHover, { value: 1, duration: .9, ease: 'power3.out' }));
+    host.addEventListener('pointerleave', () => gsap.to(p.u.uHover, { value: 0, duration: .9, ease: 'power3.out' }));
+    ScrollTrigger.create({ trigger: img.parentElement, start: 'top 88%', once: true, onEnter: () => gsap.to(p.u.uShow, { value: 1, duration: 1.6, ease: 'expo.out' }) });
+  });
+
+  /* hero: pointer trail reveals a second image */
+  const tc = document.createElement('canvas'); tc.width = 256; tc.height = 144;
+  const tctx = tc.getContext('2d'); tctx.fillStyle = '#000'; tctx.fillRect(0, 0, 256, 144);
+  const trail = new THREE.CanvasTexture(tc); trail.minFilter = THREE.LinearFilter; trail.generateMipmaps = false;
+  const tA = tex('img/campaign.jpg'), tB = tex('img/profile.jpg');
+  const hero = addPlane($('[data-hero-gl]'), FRAG_HERO, { uA: { value: tA }, uB: { value: tB }, uTrail: { value: trail }, uImgA: { value: new THREE.Vector2(16, 9) }, uImgB: { value: new THREE.Vector2(16, 9) }, uIntro: { value: 0 }, uScroll: { value: 0 } });
+  hero.texA = tA; hero.texB = tB;
+  const ptr = { x: .5, y: .5, tx: .5, ty: .5, last: 0, down: 0 };
+  const heroEl = $('.hero');
+  const onMove = e => { const b = heroEl.getBoundingClientRect(); ptr.tx = (e.clientX - b.left) / b.width; ptr.ty = (e.clientY - b.top) / b.height; ptr.last = performance.now(); if (!ptr.seen) { ptr.seen = true; gsap.to('.hero-hint', { autoAlpha: 0, duration: .6, delay: 1.2 }); } };
+  heroEl.addEventListener('pointermove', onMove, { passive: true });
+  heroEl.addEventListener('touchmove', e => onMove(e.touches[0]), { passive: true });
+  hero.trailStep = (time) => {
+    if (performance.now() - ptr.last > 2200) { ptr.tx = .5 + Math.sin(time * .45) * .32; ptr.ty = .46 + Math.sin(time * .7 + 1) * .24; }
+    const px = ptr.x, py = ptr.y;
+    ptr.x += (ptr.tx - ptr.x) * .12; ptr.y += (ptr.ty - ptr.y) * .12;
+    const sp = Math.min(1, Math.hypot(ptr.x - px, ptr.y - py) * 40);
+    tctx.globalCompositeOperation = 'source-over'; tctx.fillStyle = 'rgba(0,0,0,.035)'; tctx.fillRect(0, 0, 256, 144);
+    const r = 34 + sp * 26, x = ptr.x * 256, y = ptr.y * 144;
+    const g = tctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, 'rgba(255,255,255,' + (.25 + sp * .5) + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    tctx.globalCompositeOperation = 'lighter'; tctx.fillStyle = g; tctx.beginPath(); tctx.arc(x, y, r, 0, 6.2832); tctx.fill();
+    trail.needsUpdate = true;
+  };
+  gl.hero = hero;
+
+  /* collections: noise wipe between lines */
+  const collSrc = ['img/detail.jpg', 'img/look3.jpg', 'img/look4.jpg', 'img/profile.jpg'];
+  const collTex = collSrc.map(tex);
+  const coll = addPlane($('[data-coll-gl]'), FRAG_COLL, { uA: { value: collTex[0] }, uB: { value: collTex[0] }, uImgA: { value: new THREE.Vector2(16, 9) }, uImgB: { value: new THREE.Vector2(16, 9) }, uProg: { value: 0 } });
+  coll.cur = 0; coll.texes = collTex;
+  gl.coll = coll;
+
+  let lastY = scrollY;
+  gsap.ticker.add((time) => {
+    state.time = time;
+    const y = scrollY, raw = lenis ? lenis.velocity : (y - lastY); lastY = y;
+    const target = reduce ? 0 : gsap.utils.clamp(-1, 1, raw / 55);
+    state.vel += (target - state.vel) * .1;
+    const vw = innerWidth, vh = innerHeight;
+    let any = false;
+    for (const p of planes) {
+      const b = p.el.getBoundingClientRect();
+      const vis = b.bottom > -150 && b.top < vh + 150 && b.width > 0;
+      p.mesh.visible = vis; if (!vis) continue; any = true;
+      p.mesh.scale.set(b.width, b.height, 1);
+      p.mesh.position.set(b.left + b.width / 2 - vw / 2, -(b.top + b.height / 2 - vh / 2), 0);
+      p.u.uSize.value.set(b.width, b.height); p.u.uTime.value = time;
+      p.u.uVel.value = (p === hero || p === coll) ? 0 : state.vel;
+      if (p.par) { p.u.uPar.value = ((b.top + b.height / 2) / vh - .5); if (p.tex.image) p.u.uImg.value.copy(imgSize(p.tex)); }
+    }
+    if (hero.mesh.visible) { hero.trailStep(time); if (tA.image) hero.u.uImgA.value.copy(imgSize(tA)); if (tB.image) hero.u.uImgB.value.copy(imgSize(tB)); }
+    if (coll.mesh.visible) { const a = coll.u.uA.value, b2 = coll.u.uB.value; if (a.image) coll.u.uImgA.value.copy(imgSize(a)); if (b2.image) coll.u.uImgB.value.copy(imgSize(b2)); }
+    if (any) renderer.render(scene, camera);
+  });
+} catch (err) {
+  gl = null; document.documentElement.classList.add('no-gl'); $('#gl').style.display = 'none';
+}
+
+/* ---------- Preloader ---------- */
+const count = $('.loader-count'), line = $('.loader-line i'), shown = { v: 0 };
+let started = false;
+const tick = setInterval(() => {
+  const p = toLoad ? loaded / toLoad : 1;
+  gsap.to(shown, { v: p * 100, duration: .5, ease: 'power2.out', overwrite: true, onUpdate: () => { count.textContent = String(Math.round(shown.v)).padStart(3, '0'); gsap.set(line, { scaleX: shown.v / 100 }); } });
+  if (p >= 1 && document.fonts.status === 'loaded') { clearInterval(tick); setTimeout(start, 700); }
+}, 100);
+setTimeout(() => { clearInterval(tick); start(); }, 7000);
+
+const split = (el) => { const s = new SplitText(el, { type: 'chars', charsClass: 'ch' }); return s.chars; };
+const heroChars = split('.hero-word');
+gsap.set(heroChars, { yPercent: 110 });
+gsap.set(['.hero-meta', '.hero-hint'], { autoAlpha: 0 });
+
+function start() {
+  if (started) return; started = true;
+  const tl = gsap.timeline({ onComplete: () => { document.body.classList.remove('loading'); if (lenis) lenis.start(); ScrollTrigger.sort(); ScrollTrigger.refresh(); } });
+  tl.to('.loader-count', { yPercent: -100, duration: .9, ease: 'expo.in' })
+    .to('.loader-top, .loader-line', { opacity: 0, duration: .4 }, 0)
+    .to('.loader', { clipPath: 'inset(0 0 100% 0)', duration: 1.2, ease: 'expo.inOut' }, .5)
+    .set('.loader', { display: 'none' });
+  if (gl) tl.to(gl.hero.u.uIntro, { value: 1, duration: 2.2, ease: 'expo.out' }, .7);
+  tl.to(heroChars, { yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: .06 }, .9)
+    .to(['.hero-meta', '.hero-hint'], { autoAlpha: 1, duration: 1, stagger: .15 }, 1.6);
+}
+gsap.set('.loader', { clipPath: 'inset(0 0 0% 0)' });
+
+/* ---------- Hero scroll ---------- */
+gsap.to(heroChars, { yPercent: -40, stagger: { each: .04, from: 'center' }, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .5 } });
+if (gl) gsap.to(gl.hero.u.uScroll, { value: 1, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+/* ---------- Text reveals ---------- */
+$$('[data-lines]').forEach(h => {
+  SplitText.create(h, { type: 'lines', mask: 'lines', autoSplit: true, onSplit: self => gsap.from(self.lines, { yPercent: 110, duration: 1.3, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: h, start: 'top 85%' } }) });
+});
+gsap.from('.look .cap', { opacity: 0, y: 14, duration: .8, stagger: .1, scrollTrigger: { trigger: '.grid', start: 'top 70%' } });
+if (!reduce && fine) $$('.look').forEach((l, i) => gsap.to(l, { y: (i % 2 ? -1 : 1) * -60, ease: 'none', scrollTrigger: { trigger: l, start: 'top bottom', end: 'bottom top', scrub: true } }));
+
+/* ---------- Day and night: background follows the section ---------- */
+$$('[data-dark]').forEach(s => ScrollTrigger.create({ trigger: s, start: 'top 55%', end: 'bottom 75%', onToggle: self => gsap.to('body', { backgroundColor: self.isActive ? '#0d0d0d' : '#ece6da', duration: .7, overwrite: 'auto' }) }));
+
+/* ---------- Collections ---------- */
+const items = $$('.coll-item'), nEl = $('[data-coll-n]'), dEl = $('[data-coll-desc]');
+const desc = [demoT('Wool and linen, cut by hand', 'Lana y lino, corte a mano'), demoT('Merino spun in Boyacá', 'Merino hilado en Boyacá'), demoT('Waxed cotton for the rain', 'Algodón encerado para la lluvia'), demoT('Recycled gold, small runs', 'Oro reciclado, series cortas')];
+let collIdx = 0, collBusy = null;
+dEl.textContent = desc[0];
+function setColl(i) {
+  if (i === collIdx) return; collIdx = i;
+  items.forEach((el, k) => el.classList.toggle('on', k === i));
+  nEl.textContent = String(i + 1).padStart(2, '0'); dEl.textContent = desc[i];
+  gsap.fromTo([nEl, dEl], { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: .6, ease: 'power3.out' });
+  if (!gl) { $('.coll-gl img').src = ['img/detail.jpg', 'img/look3.jpg', 'img/look4.jpg', 'img/profile.jpg'][i]; return; }
+  const c = gl.coll;
+  if (collBusy) { collBusy.kill(); c.u.uA.value = c.u.uProg.value > .5 ? c.u.uB.value : c.u.uA.value; }
+  c.u.uB.value = c.texes[i]; c.u.uProg.value = 0;
+  collBusy = gsap.to(c.u.uProg, { value: 1, duration: 1.5, ease: 'power3.inOut', onComplete: () => { c.u.uA.value = c.texes[i]; c.u.uProg.value = 0; collBusy = null; } });
+}
+ScrollTrigger.create({ trigger: '.coll', start: 'top top', end: '+=260%', pin: true, anticipatePin: 1, onUpdate: self => setColl(Math.min(3, Math.floor(self.progress * 4))) });
+
+/* ---------- Counters ---------- */
+$$('[data-count]').forEach(el => { const o = { v: 0 }, end = +el.dataset.count, suf = el.dataset.suffix || ''; gsap.to(o, { v: end, duration: 2, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' }, onUpdate: () => { el.textContent = Math.round(o.v) + suf; } }); });
+
+/* ---------- Footer word ---------- */
+const footChars = split('.foot-word');
+gsap.from(footChars, { yPercent: 100, ease: 'none', stagger: .08, scrollTrigger: { trigger: '.foot-word', start: 'top 100%', end: 'bottom 100%', scrub: .6 } });
+
+/* ---------- Cursor ---------- */
+if (fine) {
+  const cur = $('.cursor'), lab = $('span', cur);
+  const cx = gsap.quickTo(cur, 'x', { duration: .35, ease: 'power3.out' }), cy = gsap.quickTo(cur, 'y', { duration: .35, ease: 'power3.out' });
+  addEventListener('pointermove', e => { cx(e.clientX); cy(e.clientY); }, { passive: true });
+  $$('.look').forEach(l => {
+    l.addEventListener('pointerenter', () => { gsap.to(cur, { width: 84, height: 84, margin: '-42px 0 0 -42px', duration: .5, ease: 'expo.out' }); gsap.to(lab, { opacity: 1, duration: .3 }); });
+    l.addEventListener('pointerleave', () => { gsap.to(cur, { width: 12, height: 12, margin: '-6px 0 0 -6px', duration: .5, ease: 'expo.out' }); gsap.to(lab, { opacity: 0, duration: .2 }); });
+  });
+  $$('a:not(.look), button').forEach(l => {
+    l.addEventListener('pointerenter', () => gsap.to(cur, { scale: 3, duration: .4, ease: 'expo.out' }));
+    l.addEventListener('pointerleave', () => gsap.to(cur, { scale: 1, duration: .4, ease: 'expo.out' }));
+  });
+  items.forEach(it => it.addEventListener('pointerenter', () => setColl(+it.dataset.i)));
+}
+
+/* ---------- Newsletter (demo) ---------- */
+$('.news').addEventListener('submit', e => { e.preventDefault(); $('.news-note').textContent = demoT('This is a demo, so nothing was sent. On your site, this works.', 'Esto es un demo, así que no se envió nada. En tu sitio, sí funciona.'); e.target.reset(); });
+
+addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
+</script>
+</body>
+</html>
