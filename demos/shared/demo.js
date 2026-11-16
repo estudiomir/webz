@@ -32,4 +32,15 @@
     tag.innerHTML = '<span class="webz-tag-dot"></span><span>' + demoT('Demo site by <b>Webz</b>', 'Sitio demo de <b>Webz</b>') + '</span><span class="webz-tag-back">' + demoT('Back', 'Volver') + ' ↗</span>';
     document.body.appendChild(tag);
   };
+
+  /* The header steps aside while the visitor scrolls down and comes back when they scroll up, so it never sits on top of the content. */
+  var lastY = 0;
+  window.addEventListener('scroll', function () {
+    var nav = document.querySelector('.nav');
+    if (!nav) return;
+    var y = window.scrollY || 0;
+    if (y <= 90) { nav.classList.remove('nav-away'); lastY = y; }
+    else if (y > lastY + 6) { nav.classList.add('nav-away'); lastY = y; }
+    else if (y < lastY - 6) { nav.classList.remove('nav-away'); lastY = y; }
+  }, { passive: true });
 })();
