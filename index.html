@@ -196,13 +196,14 @@ header.nav {
 .site .shot img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
 .site:hover .shot img, .site:focus-visible .shot img { transform: scale(1.045); }
 .site .tag { position: absolute; left: 12px; top: 12px; padding: 6px 9px; border-radius: 999px; background: rgba(11,11,12,.78); color: var(--white); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.site .meta > span:last-child { flex: none; }
+.site .meta .out { flex: none; }
+.site .who { min-width: 0; }
 .site .tag { font-weight: 500; font-stretch: 100%; }
-.site .meta b { display: block; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; margin-bottom: 4px; }
+.site .who b { display: block; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -0.01em; margin-bottom: 4px; }
 @media (prefers-reduced-motion: reduce) { .site .shot img { transition: none; } }
+.site .out { display: inline-flex; }
 
 /* Language gate + switch */
-.gate[hidden] { display: none; }
 .gate {
   position: fixed; inset: 0; z-index: 50;
   background: var(--ink);
@@ -253,10 +254,48 @@ form { display: grid; gap: 18px; }
 .contact .btn:disabled { opacity: .5; cursor: progress; }
 .contact .btn:hover { background: transparent; color: var(--ink); }
 .contact :focus-visible { outline-color: var(--ink); }
+.contact .call { margin-top: 32px; padding-top: 24px; border-top: 1px solid #d6d6da; max-width: 46ch; }
+.contact .call p { margin: 0 0 16px; color: #4a4a50; }
+.contact .btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.contact .btn.ghost:hover { background: var(--ink); color: var(--paper); }
 .note { font-family: var(--mono); font-size: 13px; color: #4a4a50; min-height: 1.4em; margin: 0; }
 
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-block: 36px; border-top: 1px solid var(--line); }
 footer p { margin: 0; color: var(--mute); font-size: 14px; }
+
+/* Accent: one shiny lime, used sparingly. Black and white stay the base. */
+:root {
+  --acc: #c8ff2e; --acc-hi: #e9ff8f; --acc-lo: #7fd400; --acc-rgb: 200, 255, 46;
+  --shine: linear-gradient(135deg, var(--acc-hi) 0%, var(--acc) 45%, var(--acc-lo) 100%);
+}
+.btn:not(.ghost), .contact .btn:not(.ghost) {
+  background: var(--shine); color: var(--ink); border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .35), 0 6px 24px -6px rgba(var(--acc-rgb), .65), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: filter .2s, box-shadow .2s;
+}
+.btn:not(.ghost):hover, .contact .btn:not(.ghost):hover {
+  background: var(--shine); color: var(--ink); filter: brightness(1.08);
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .5), 0 8px 34px -4px rgba(var(--acc-rgb), .85), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+.btn.ghost:hover { border-color: var(--acc); color: var(--acc); }
+.contact .btn.ghost:hover { color: var(--paper); border-color: var(--ink); }
+.hl { background: var(--shine); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 18px rgba(var(--acc-rgb), .35)); }
+.hero .label::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 10px rgba(var(--acc-rgb), .9); margin-right: 10px; vertical-align: 1px; }
+.lang button[aria-pressed="true"] { background: var(--acc); color: var(--ink); }
+.track .bar i { background: var(--shine); box-shadow: 0 0 12px rgba(var(--acc-rgb), .8); }
+.stop:last-child::before { background: var(--acc); box-shadow: 0 0 12px rgba(var(--acc-rgb), .9); }
+.stop:last-child .h { color: var(--acc); }
+.timer .tick { color: var(--acc); text-shadow: 0 0 24px rgba(var(--acc-rgb), .5); }
+.layer { position: relative; }
+.layer::before { content: ""; position: absolute; left: -16px; top: 0; bottom: 0; width: 3px; background: var(--shine); box-shadow: 0 0 12px rgba(var(--acc-rgb), .8); opacity: 0; transition: opacity .25s; }
+.layer:hover::before { opacity: 1; }
+.layer .lvl { transition: color .25s; }
+.layer:hover .lvl { color: var(--acc); }
+.site:hover { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc), 0 0 36px -8px rgba(var(--acc-rgb), .7); }
+.site:hover .meta span:last-child { color: var(--acc); }
+.gate button:hover { box-shadow: 0 0 28px -6px rgba(var(--acc-rgb), .6); }
+/* The language screen sets display:grid, which beat the hidden attribute and kept it on screen. */
+.gate[hidden] { display: none; }
 
 @media (max-width: 860px) {
   .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 56px 72px; }
@@ -326,7 +365,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     <div class="wrap">
       <div>
         <div class="label">Websites for businesses</div>
-        <h1>A great business deserves a great website.</h1>
+        <h1>A great business deserves <span class="hl">a great website.</span></h1>
         <p class="lede">We help you build yours, from the first sketch to launch day.</p>
         <div class="ctas">
           <a class="btn" href="#start">Tell us your vision <span class="arrow" aria-hidden="true">→</span></a>
@@ -359,7 +398,7 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     <div class="wrap">
       <div class="label">The 72-hour build</div>
       <h2>Have the site of your dreams within 72 hours.</h2>
-      <div class="timer" id="timer" aria-label="72 hours">72:00:00<small>From kickoff call to live site</small></div>
+      <div class="timer" id="timer" aria-label="72 hours"><span class="tick">72</span>:00:00<small>From kickoff call to live site</small></div>
       <div class="track">
         <div class="bar"><i id="bar"></i></div>
         <div class="stops">
@@ -425,22 +464,22 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
         <a class="site" href="demos/niebla/" data-demo="niebla">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>estudiowebz.com/demos/niebla</span></div>
           <div class="face shot"><img src="demos/thumbs/niebla-en.webp" width="1280" height="720" loading="lazy" alt="Niebla, a concept site for a coffee shop" data-alt-es="Niebla, un sitio concepto para una cafetería"><span class="tag">Concept demo</span></div>
-          <div class="meta"><span><b>Niebla</b><span class="label">Coffee shop · Scroll storytelling</span></span><span aria-hidden="true">↗</span></div>
+          <div class="meta"><div class="who"><b>Niebla</b><div class="label">Coffee shop · Scroll storytelling</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
         <a class="site" href="demos/lienzo/" data-demo="lienzo">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>estudiowebz.com/demos/lienzo</span></div>
           <div class="face shot"><img src="demos/thumbs/lienzo-en.webp" width="1280" height="720" loading="lazy" alt="Lienzo, a concept site for a clothing brand" data-alt-es="Lienzo, un sitio concepto para una marca de ropa"><span class="tag">Concept demo</span></div>
-          <div class="meta"><span><b>Lienzo</b><span class="label">Clothing brand · Interactive 3D</span></span><span aria-hidden="true">↗</span></div>
+          <div class="meta"><div class="who"><b>Lienzo</b><div class="label">Clothing brand · Interactive 3D</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
         <a class="site" href="demos/fragua/" data-demo="fragua">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>estudiowebz.com/demos/fragua</span></div>
           <div class="face shot"><img src="demos/thumbs/fragua-en.webp" width="1280" height="720" loading="lazy" alt="Fragua, a concept site for a gym" data-alt-es="Fragua, un sitio concepto para un gimnasio"><span class="tag">Concept demo</span></div>
-          <div class="meta"><span><b>Fragua</b><span class="label">Gym · Motion graphics and sound</span></span><span aria-hidden="true">↗</span></div>
+          <div class="meta"><div class="who"><b>Fragua</b><div class="label">Gym · Motion graphics and sound</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
         <a class="site" href="https://estudiomir.com" target="_blank" rel="noopener">
           <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>https://estudiomir.com</span></div>
           <div class="face shot">estudiomir.com<span class="tag">Live site</span></div>
-          <div class="meta"><span><b>Estudio Mir</b><span class="label">Visit the live site</span></span><span aria-hidden="true">↗</span></div>
+          <div class="meta"><div class="who"><b>Estudio Mir</b><div class="label">Visit the live site</div></div><span aria-hidden="true" class="out"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 L11.5 4.5 M5.5 4.5 H11.5 V10.5"/></svg></span></div>
         </a>
       </div>
     </div>
@@ -452,6 +491,10 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
         <div class="label">Start your site</div>
         <h2>Tell us about your business.</h2>
         <p class="intro">Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.</p>
+        <div class="call" id="call" hidden>
+          <p>Prefer to talk first? Pick a time for a free 20-minute video call.</p>
+          <a class="btn ghost" id="book" href="#start" target="_blank" rel="noopener">Book a call <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
       </div>
       <form id="lead" novalidate>
         <div class="row">
@@ -495,7 +538,8 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     "Sample work": "Nuestro trabajo",
     "Start your site": "Empieza tu sitio",
     "Websites for businesses": "Sitios web para negocios",
-    "A great business deserves a great website.": "Un gran negocio merece un gran sitio web.",
+    "A great business deserves": "Un gran negocio merece",
+    "a great website.": "un gran sitio web.",
     "We help you build yours, from the first sketch to launch day.": "Te ayudamos a construir el tuyo, desde el primer boceto hasta el día del lanzamiento.",
     "Tell us your vision": "Cuéntanos tu visión",
     "See the 72-hour plan": "Ver el plan de 72 horas",
@@ -546,6 +590,8 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     "Gym · Motion graphics and sound": "Gimnasio · Animación y sonido",
     "Tell us about your business.": "Cuéntanos sobre tu negocio.",
     "Send us a few lines and we'll reply within one business day to book your kickoff call. Your 72 hours start then.": "Escríbenos unas líneas y te responderemos en un día hábil para agendar la llamada de inicio. Ahí empiezan tus 72 horas.",
+    "Prefer to talk first? Pick a time for a free 20-minute video call.": "¿Prefieres hablar primero? Elige un horario para una videollamada gratis de 20 minutos.",
+    "Book a call": "Agenda una llamada",
     "Your name": "Tu nombre",
     "Business": "Negocio",
     "Email": "Correo",
@@ -638,10 +684,11 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
     function step(t) {
       if (!start) start = t;
       var k = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - k, 3);
-      timer.innerHTML = fmt(72 * (1 - e)) + '<small>' + tr('From kickoff call to live site') + '</small>'; timer.dataset.done = '';
+      var t = fmt(72 * (1 - e));
+      timer.innerHTML = '<span class="tick">' + t.slice(0, 2) + '</span>' + t.slice(2) + '<small>' + tr('From kickoff call to live site') + '</small>'; timer.dataset.done = '';
       bar.style.transform = 'scaleX(' + e + ')';
       if (k < 1) requestAnimationFrame(step);
-      else { timer.dataset.done = '1'; timer.innerHTML = '00:00:00<small>' + tr('Your site is live') + '</small>'; }
+      else { timer.dataset.done = '1'; timer.innerHTML = '<span class="tick">00</span>:00:00<small>' + tr('Your site is live') + '</small>'; }
     }
     requestAnimationFrame(step);
   }
@@ -653,8 +700,15 @@ footer p { margin: 0; color: var(--mute); font-size: 14px; }
   }
 
   // Form submissions are emailed to the Webz inbox through FormSubmit (formsubmit.co).
-  var EMAIL = 'webzsites26@gmail.com';
+  var EMAIL = 'sites@estudiowebz.com';
   var INBOX = 'https://formsubmit.co/ajax/' + EMAIL;
+  // Client call booking page (Google Calendar appointment schedule). The "Book a call"
+  // block in the contact section stays hidden until this has a link.
+  var BOOKING_URL = '';
+  if (BOOKING_URL) {
+    document.getElementById('book').href = BOOKING_URL;
+    document.getElementById('call').hidden = false;
+  }
   var form = document.getElementById('lead'), note = document.getElementById('note');
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
