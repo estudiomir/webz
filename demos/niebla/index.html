@@ -64,14 +64,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @media (max-width: 720px) { .nav-links a { display: none; } }
 
 /* Hero */
-.hero { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
+.hero { position: relative; height: 100vh; height: 100svh; overflow: hidden; background: var(--cream); }
 .hero-stage { position: absolute; inset: 0; display: grid; place-items: center; }
 .hero h1 { font-size: clamp(46px, 9.2vw, 168px); text-align: center; position: relative; z-index: 3; padding: 0 var(--pad); }
 .hero h1 i { color: var(--ochre); }
 .hero-kicker { position: absolute; top: 22%; left: 0; right: 0; text-align: center; z-index: 3; }
-.cards { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.card { position: absolute; left: 50%; top: 50%; width: var(--w); aspect-ratio: var(--ar, 4/5); margin: calc(var(--w) * -0.6) 0 0 calc(var(--w) * -0.5); border-radius: 6px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(20,26,21,.45); will-change: transform; }
-.card img { width: 100%; height: 100%; object-fit: cover; }
 .hero-reveal { position: absolute; inset: 0; z-index: 4; clip-path: circle(0% at 50% 50%); will-change: clip-path; color: var(--cream); }
 .hero-reveal img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); will-change: transform; }
 .hero-reveal::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(24,36,28,.28), rgba(24,36,28,.05) 40%, rgba(24,36,28,.55)); }
@@ -234,15 +231,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     <div class="hero-stage">
       <p class="hero-kicker mono" data-es="Tostadores de café de altura · Desde 2014">Cloud-forest coffee roasters · Since 2014</p>
       <h1 class="serif" data-hero data-es="Café que crece<br>entre <i>las nubes.</i>">Coffee grown<br>in <i>the clouds.</i></h1>
-    </div>
-    <div class="cards" aria-hidden="true">
-      <div class="card" style="--w:clamp(110px,15vw,250px);--x:-38vw;--y:-24vh;--r:-7deg" data-d=".9"><img src="img/cherries.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(90px,11vw,180px);--x:-21vw;--y:29vh;--r:5deg;--ar:1" data-d=".5"><img src="img/latte.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(120px,17vw,280px);--x:36vw;--y:-20vh;--r:6deg" data-d="1.1"><img src="img/barista.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(100px,13vw,210px);--x:26vw;--y:30vh;--r:-4deg;--ar:5/4" data-d=".7"><img src="img/roaster.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(70px,8vw,130px);--x:-8vw;--y:-36vh;--r:3deg;--ar:1" data-d=".35"><img src="img/pour.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(80px,9vw,150px);--x:-41vw;--y:22vh;--r:-3deg" data-d=".6"><img src="img/bag.jpg" alt=""></div>
-      <div class="card" style="--w:clamp(70px,8vw,140px);--x:10vw;--y:38vh;--r:8deg;--ar:5/4" data-d=".4"><img src="img/interior.jpg" alt=""></div>
     </div>
     <div class="hero-reveal" aria-hidden="true">
       <img src="img/farm.jpg" alt="">
@@ -446,30 +434,17 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   setTimeout(function () { clearInterval(poll); start(); }, 6000);
 
   /* Hero */
-  var cards = $$('.card');
-  cards.forEach(function (c) { gsap.set(c, { x: 0, y: 0, scale: .2, opacity: 0, rotation: 0 }); });
   var heroSplit = new SplitText('[data-hero]', { type: 'lines', mask: 'lines' });
   gsap.set(heroSplit.lines, { yPercent: 110 });
   gsap.set(['.hero-stage > .hero-kicker', '.hero-foot'], { opacity: 0 });
   function intro() {
     var tl = gsap.timeline();
     tl.to(heroSplit.lines, { yPercent: 0, duration: 1.3, ease: 'expo.out', stagger: .1 })
-      .to(cards, { x: function (i, el) { return getComputedStyle(el).getPropertyValue('--x'); }, y: function (i, el) { return getComputedStyle(el).getPropertyValue('--y'); }, rotation: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--r')); }, scale: 1, opacity: 1, duration: 1.6, ease: 'expo.out', stagger: .06 }, .1)
       .to(['.hero-stage > .hero-kicker', '.hero-foot'], { opacity: 1, duration: 1 }, .7);
     return tl;
   }
-  /* cards drift with the pointer */
-  if (fine && !reduce) {
-    var inner = cards.map(function (c) { return { el: c.firstElementChild, d: parseFloat(c.dataset.d) }; });
-    var movers = inner.map(function (o) { return { x: gsap.quickTo(o.el, 'x', { duration: 1.2, ease: 'power3.out' }), y: gsap.quickTo(o.el, 'y', { duration: 1.2, ease: 'power3.out' }) }; });
-    inner.forEach(function (o) { gsap.set(o.el, { scale: 1.18 }); });
-    window.addEventListener('pointermove', function (e) {
-      var nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
-      inner.forEach(function (o, i) { movers[i].x(-nx * 26 * o.d); movers[i].y(-ny * 26 * o.d); });
-    }, { passive: true });
-  }
   var heroTl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=170%', pin: true, scrub: .6, anticipatePin: 1 } });
-  heroTl.to(cards, { xPercent: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--x')) * 9; }, yPercent: function (i, el) { return parseFloat(getComputedStyle(el).getPropertyValue('--y')) * 7; }, scale: 1.7, rotation: '+=14', ease: 'power2.in', duration: 1 }, 0)
+  heroTl
     .to('.hero-reveal', { clipPath: 'circle(75% at 50% 50%)', ease: 'power2.inOut', duration: 1 }, .08)
     .to('.hero-reveal img', { scale: 1, ease: 'none', duration: 1.4 }, .08)
     .to('.hero-foot', { opacity: 0, duration: .3 }, 1.1)
